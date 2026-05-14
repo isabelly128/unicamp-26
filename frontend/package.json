@@ -1,1 +1,24 @@
-{\n  "name": "unicamp-26-frontend",\n  "version": "1.0.0",\n  "private": true,\n  "dependencies": {\n    "react": "^17.0.2",\n    "react-dom": "^17.0.2",\n    "react-router-dom": "^5.3.0",\n    "axios": "^0.21.1",\n    "@types/react": "^17.0.2",\n    "@types/react-dom": "^17.0.2",\n    "@types/react-router-dom": "^5.1.7"\n  }\n}
+{
+  "name": "camp-portal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0",
+    "zustand": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.4"
+  }
+}

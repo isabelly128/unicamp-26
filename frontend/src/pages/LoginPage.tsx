@@ -1,120 +1,255 @@
-import React, { useState } from 'react';
+import React, { CSSProperties, FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
-const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const login = useAuthStore((state) => state.login);
-  const navigate = useNavigate();
+export const LoginPage: FC = () => {
+  const [email, setEmail]       = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError]       = useState<string>('');
+  const [loading, setLoading]   = useState<boolean>(false);
+  const { login }               = useAuthStore();
+  const navigate                = useNavigate();
 
-  const demoAccounts = [
-    { email: 'member@camp.com', password: 'member123', role: 'Member' },
-    { email: 'admin@camp.com', password: 'admin123', role: 'Admin' },
-    { email: 'comms@camp.com', password: 'comms123', role: 'Comms Team' },
-    { email: 'pastoral@camp.com', password: 'pastoral123', role: 'Pastoral Team' },
-  ];
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    try {
-      await login(email, password);
-      navigate('/');
-    } catch (err) {
-      setError('Invalid email or password');
-    } finally {
+    login(email, password).then((success: boolean) => {
       setLoading(false);
-    }
+      if (success) { navigate('/'); }
+      else { setError('Invalid email or password.'); }
+    });
   };
 
-  const handleDemoLogin = async (demoEmail: string, demoPassword: string) => {
-    setError('');
-    setLoading(true);
-    setEmail(demoEmail);
+  const containerStyle: CSSProperties = {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'stretch',
+    background: '#0A1128',
+    position: 'relative',
+    overflow: 'hidden',
+  };
 
-    try {
-      await login(demoEmail, demoPassword);
-      navigate('/');
-    } catch (err) {
-      setError('Demo login failed');
-    } finally {
-      setLoading(false);
-    }
+  const inputStyle: CSSProperties = {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: '4px',
+    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'rgba(255,255,255,0.05)',
+    color: '#F0EDE4',
+    fontSize: '15px',
+    fontFamily: "'Barlow', sans-serif",
+    outline: 'none',
+    boxSizing: 'border-box',
+    letterSpacing: '0.02em',
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">🏕️ UniCamp 26</h1>
-          <p className="text-gray-600">Camp Community Platform</p>
+    <div style={containerStyle}>
+
+      {/* Left — big editorial type */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        padding: '64px',
+        background: 'linear-gradient(160deg, #0D1B4A 0%, #0A1128 60%, #060D1E 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Background accent blobs */}
+        <div style={{
+          position: 'absolute', top: '-80px', left: '-80px',
+          width: '400px', height: '400px',
+          background: 'radial-gradient(circle, rgba(212,230,0,0.08) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '20%', right: '-40px',
+          width: '300px', height: '300px',
+          background: 'radial-gradient(circle, rgba(74,144,217,0.12) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Camp label */}
+        <div style={{
+          position: 'absolute', top: '48px', left: '64px',
+          fontSize: '11px', letterSpacing: '0.2em',
+          color: 'rgba(212,230,0,0.7)', fontWeight: 600,
+          textTransform: 'uppercase',
+          fontFamily: "'Barlow Condensed', sans-serif",
+        }}>
+          UNICAMP 2026
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+        {/* Big headline */}
+        <div>
+          <div style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 900,
+            fontSize: 'clamp(72px, 10vw, 120px)',
+            lineHeight: 0.9,
+            textTransform: 'uppercase',
+            color: '#F0EDE4',
+            letterSpacing: '-0.02em',
+            marginBottom: '8px',
+          }}>
+            HERE
+          </div>
+          <div style={{
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: 'italic',
+            fontWeight: 700,
+            fontSize: 'clamp(52px, 7vw, 88px)',
+            lineHeight: 0.95,
+            color: '#D4E600',
+            marginBottom: '8px',
+          }}>
+            I Am,
+          </div>
+          <div style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 900,
+            fontSize: 'clamp(72px, 10vw, 120px)',
+            lineHeight: 0.9,
+            textTransform: 'uppercase',
+            color: '#F0EDE4',
+            letterSpacing: '-0.02em',
+            marginBottom: '32px',
+          }}>
+            LORD.
+          </div>
+          <p style={{
+            fontFamily: "'Barlow', sans-serif",
+            fontSize: '14px',
+            color: 'rgba(240,237,228,0.45)',
+            fontStyle: 'italic',
+            lineHeight: 1.7,
+            maxWidth: '340px',
+          }}>
+            "Then I heard the voice of the Lord saying, 'Whom shall I send?'
+            And I said, 'Here am I. Send me!'" — Isaiah 6:8
+          </p>
+        </div>
+      </div>
+
+      {/* Right — sign in form */}
+      <div style={{
+        width: '420px',
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '64px 48px',
+        background: '#060D1E',
+        borderLeft: '1px solid rgba(255,255,255,0.06)',
+      }}>
+        <div style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontWeight: 800,
+          fontSize: '13px',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: '#D4E600',
+          marginBottom: '32px',
+        }}>
+          Camp Portal
+        </div>
+
+        <h2 style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontWeight: 900,
+          fontSize: '42px',
+          textTransform: 'uppercase',
+          letterSpacing: '-0.01em',
+          color: '#F0EDE4',
+          marginBottom: '8px',
+          lineHeight: 1,
+        }}>
+          Sign In
+        </h2>
+        <p style={{
+          fontSize: '14px', color: 'rgba(240,237,228,0.4)',
+          marginBottom: '36px', fontFamily: "'Barlow', sans-serif",
+        }}>
+          Welcome back
+        </p>
+
+        {/* Demo hint */}
+        <div style={{
+          background: 'rgba(212,230,0,0.06)',
+          border: '1px solid rgba(212,230,0,0.15)',
+          borderRadius: '4px',
+          padding: '12px 14px',
+          marginBottom: '28px',
+          fontSize: '11px',
+          color: 'rgba(212,230,0,0.7)',
+          lineHeight: 1.8,
+          fontFamily: "'Barlow', sans-serif",
+        }}>
+          <strong>Demo</strong> · password: camp2024<br />
+          comms@camp.sg · pastoral@camp.sg<br />
+          admin@camp.sg · member@camp.sg
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{
+              display: 'block', fontSize: '11px', fontWeight: 600,
+              letterSpacing: '0.12em', textTransform: 'uppercase',
+              color: 'rgba(240,237,228,0.5)', marginBottom: '8px',
+              fontFamily: "'Barlow Condensed', sans-serif",
+            }}>Email</label>
             <input
-              type="email"
-              value={email}
+              type="email" value={email} required
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your email"
-              required
+              placeholder="your@email.com"
+              style={inputStyle}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+          <div style={{ marginBottom: '28px' }}>
+            <label style={{
+              display: 'block', fontSize: '11px', fontWeight: 600,
+              letterSpacing: '0.12em', textTransform: 'uppercase',
+              color: 'rgba(240,237,228,0.5)', marginBottom: '8px',
+              fontFamily: "'Barlow Condensed', sans-serif",
+            }}>Password</label>
             <input
-              type="password"
-              value={password}
+              type="password" value={password} required
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
-              required
+              placeholder="••••••••"
+              style={inputStyle}
             />
           </div>
 
-          {error && <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm">{error}</div>}
+          {error && (
+            <div style={{
+              background: 'rgba(220,80,80,0.08)',
+              border: '1px solid rgba(220,80,80,0.25)',
+              borderRadius: '4px', padding: '10px 14px',
+              marginBottom: '16px', fontSize: '13px',
+              color: '#e07070',
+              fontFamily: "'Barlow', sans-serif",
+            }}>{error}</div>
+          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? 'Logging in...' : 'Login'}
+          <button type="submit" disabled={loading} style={{
+            width: '100%', padding: '16px',
+            borderRadius: '4px', border: 'none',
+            background: loading ? 'rgba(255,255,255,0.08)' : '#D4E600',
+            color: loading ? 'rgba(240,237,228,0.3)' : '#0A1128',
+            fontSize: '13px', fontWeight: 800,
+            fontFamily: "'Barlow Condensed', sans-serif",
+            letterSpacing: '0.15em', textTransform: 'uppercase',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'background 0.15s',
+          }}>
+            {loading ? 'Signing in…' : 'Enter Camp →'}
           </button>
         </form>
-
-        {/* Demo Accounts */}
-        <div className="border-t pt-6">
-          <p className="text-sm text-gray-600 text-center mb-4">Demo Accounts</p>
-          <div className="space-y-2">
-            {demoAccounts.map((account) => (
-              <button
-                key={account.email}
-                type="button"
-                onClick={() => handleDemoLogin(account.email, account.password)}
-                disabled={loading}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded-lg text-sm font-medium transition disabled:opacity-50"
-              >
-                {account.role}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
 };
-
-export default LoginPage;
