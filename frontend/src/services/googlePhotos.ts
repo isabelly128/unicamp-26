@@ -1,64 +1,57 @@
-// googlePhotos.ts — Google Photos integration service
-// Google Photos doesn't have a public embed API, but shared albums 
-// can be embedded via iframe or accessed via the Photos Library API.
+// googlePhotos.ts
+// Linked to: https://drive.google.com/drive/folders/1YKE5dDtrgkBiMLjIwsumpuZuHXICPjrC
+//
+// HOW AUTO-UPDATING WORKS:
+//   The folder is embedded as an iframe. When you add photos to the Drive
+//   folder, they appear automatically — zero extra steps needed.
+//
+// FOR A RICHER GRID: add individual file IDs to DRIVE_PHOTOS below.
+//   Each file must be shared "Anyone with the link → Viewer".
+//   Get a file's ID from its share link: drive.google.com/file/d/FILE_ID/view
 
-export interface GooglePhoto {
+export const DRIVE_FOLDER_ID = '1YKE5dDtrgkBiMLjIwsumpuZuHXICPjrC';
+
+export const DRIVE_FOLDER_URL =
+  `https://drive.google.com/drive/folders/${DRIVE_FOLDER_ID}`;
+
+export const DRIVE_EMBED_URL =
+  `https://drive.google.com/embeddedfolderview?id=${DRIVE_FOLDER_ID}#grid`;
+
+/** Convert a Drive file ID → direct image src */
+export function driveImageUrl(fileId: string): string {
+  return `https://drive.google.com/uc?export=view&id=${fileId}`;
+}
+
+/** Convert a Drive file ID → fast thumbnail src */
+export function driveThumbnailUrl(fileId: string, size = 400): string {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size}`;
+}
+
+export interface DrivePhoto {
   id: string;
-  baseUrl: string;
-  filename: string;
-  mediaMetadata: {
-    creationTime: string;
-    width: string;
-    height: string;
-  };
+  caption?: string;
+  day?: number; // 1–4
 }
 
 /**
- * To auto-update when you add photos to a shared album:
- * 
- * Option A (Simplest): Embed the Google Photos shared album iframe directly.
- *   - Go to the album → Share → "Get link" 
- *   - Use that URL in an iframe or redirect
- * 
- * Option B (Best UX): Use a backend service (Node/Python) with Google Photos API
- *   - Set up OAuth2 with the Google Photos Library API
- *   - Cache album contents in your DB, refresh every 5 min via cron
- *   - Expose a /api/photos/album/:albumId endpoint
- *
- * This service provides the utilities for Option B.
+ * Add your Drive file IDs here — PhotosPage picks them up automatically.
+ * Example: { id: '1AbCdEfG...', caption: 'Opening worship', day: 1 }
  */
-
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://your-backend.com/api';
+export const DRIVE_PHOTOS: DrivePhoto[] = [
+  // { id: 'YOUR_FILE_ID', caption: 'Day 1', day: 1 },
+];
 
 export const googlePhotosService = {
-  /**
-   * Fetch photos from your backend proxy (which calls Google Photos API)
-   */
-  async getAlbumPhotos(albumId: string): Promise<GooglePhoto[]> {
-    try {
-      const res = await fetch(`${BACKEND_URL}/photos/album/${albumId}`);
-      if (!res.ok) return [];
-      return res.json();
-    } catch {
-      console.error('Failed to fetch album photos');
-      return [];
-    }
+  openFolder(): void {
+    window.open(DRIVE_FOLDER_URL, '_blank', 'noopener,noreferrer');
   },
-
-  /**
-   * Get Google Photos shared album embed URL
-   * Users click this to open in Google Photos
-   */
-  getSharedAlbumUrl(albumShareToken: string) {
-    return `https://photos.app.goo.gl/${albumShareToken}`;
+  embedUrl(): string {
+    return DRIVE_EMBED_URL;
   },
-
-  /**
-   * For iframe embedding (limited but works without API)
-   * Note: Google Photos doesn't officially support iframe embedding,
-   * so this redirects users to the album.
-   */
-  getAlbumRedirectUrl(albumUrl: string) {
-    return albumUrl;
+  getPhotos(): DrivePhoto[] {
+    return DRIVE_PHOTOS;
+  },
+  getPhotosByDay(day: number): DrivePhoto[] {
+    return DRIVE_PHOTOS.filter((p) => p.day === day);
   },
 };
