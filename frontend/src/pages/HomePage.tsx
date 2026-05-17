@@ -22,7 +22,7 @@ const FEATURE_CARDS: FeatureCard[] = [
   { icon: '✨', label: 'DAILY',   labelScript: 'Blessings',  path: '/blessings',    desc: 'Randomized prompts',          accent: '#D4E600' },
 ];
 
-const CAMP_DATES = 'June 1 – 4, 2024';
+const CAMP_DATES = 'July 2 – 5, 2026';
 const THEME_VERSE = '"Then I heard the voice of the Lord saying, \'Whom shall I send?\' And I said, \'Here am I. Send me!\'" — Isaiah 6:8';
 
 export const HomePage: React.FC = () => {
