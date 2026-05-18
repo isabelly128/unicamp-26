@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const NAV_ITEMS = [
@@ -20,15 +20,18 @@ const QUICK_LINKS = [
 
 export const MemberNavbar: React.FC = () => {
   const location = useLocation();
+  const [staffHover, setStaffHover] = useState(false);
 
   return (
     <>
+      {/* ── Desktop sidebar ── */}
       <aside style={{
         position: 'fixed', left: 0, top: 0, bottom: 0, width: '220px',
         background: '#060D1E', borderRight: '1px solid rgba(255,255,255,0.06)',
         display: 'flex', flexDirection: 'column', zIndex: 100, overflowY: 'auto',
       }} className="sidebar">
 
+        {/* Logo */}
         <div style={{ padding: '28px 20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div style={{
             fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900,
@@ -51,6 +54,7 @@ export const MemberNavbar: React.FC = () => {
           }}>Member</div>
         </div>
 
+        {/* Nav links */}
         <nav style={{ flex: 1, padding: '16px 12px' }}>
           {NAV_ITEMS.map((item) => {
             const active = location.pathname === item.path;
@@ -83,6 +87,7 @@ export const MemberNavbar: React.FC = () => {
             );
           })}
 
+          {/* Quick links */}
           <div style={{
             margin: '20px 0 8px', fontSize: '9px', fontWeight: 700,
             color: 'rgba(240,237,228,0.2)', letterSpacing: '0.15em', paddingLeft: '10px',
@@ -106,49 +111,101 @@ export const MemberNavbar: React.FC = () => {
           ))}
         </nav>
 
-        {/* Staff portal link at bottom */}
+        {/* Staff portal — desktop */}
         <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <a
-            href="/staff"
-            style={{
-              display: 'block', width: '100%', padding: '9px', textAlign: 'center',
-              borderRadius: '4px', border: '1px solid rgba(255,255,255,0.08)',
-              background: 'transparent', color: 'rgba(240,237,228,0.25)',
-              fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em',
-              textTransform: 'uppercase', fontFamily: "'Barlow Condensed',sans-serif",
-              textDecoration: 'none',
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(212,230,0,0.5)'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(240,237,228,0.25)'; }}
+          <a href="/staff/login" style={{
+            display: 'block', width: '100%', padding: '9px', textAlign: 'center',
+            borderRadius: '4px', border: '1px solid rgba(255,255,255,0.08)',
+            background: 'transparent',
+            color: staffHover ? 'rgba(212,230,0,0.6)' : 'rgba(240,237,228,0.25)',
+            fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em',
+            textTransform: 'uppercase', fontFamily: "'Barlow Condensed',sans-serif",
+            textDecoration: 'none', transition: 'color 0.15s',
+          }}
+          onMouseEnter={() => setStaffHover(true)}
+          onMouseLeave={() => setStaffHover(false)}
           >
             Staff Portal →
           </a>
         </div>
       </aside>
 
-      {/* Mobile bottom nav */}
+      {/* ── Mobile bottom nav ── */}
+      {/* Scrollable strip with ALL nav items + staff portal at the end */}
       <nav style={{
-        display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: '#060D1E', borderTop: '1px solid rgba(255,255,255,0.06)',
-        padding: '6px 0', zIndex: 100, overflowX: 'auto', whiteSpace: 'nowrap',
+        display: 'none',
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: '#060D1E',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        zIndex: 100,
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+        // Hide scrollbar but keep scrollability
+        scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'],
       }} className="mobile-nav">
-        {NAV_ITEMS.slice(0, 6).map((item) => {
-          const active = location.pathname === item.path;
-          return (
-            <Link key={item.path} to={item.path} style={{
-              display: 'inline-flex', flexDirection: 'column', alignItems: 'center',
-              padding: '6px 14px', textDecoration: 'none', minWidth: '60px',
-            }}>
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
-              <span style={{
-                fontFamily: "'Barlow Condensed',sans-serif", fontSize: '9px',
-                fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                color: active ? '#D4E600' : 'rgba(240,237,228,0.3)', marginTop: '2px',
-              }}>{item.script}</span>
-            </Link>
-          );
-        })}
+
+        {/* Inner flex — does NOT wrap so it stays one horizontal row */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'stretch',
+          width: 'max-content', // grows to fit all items
+          padding: '0',
+        }}>
+          {/* All 9 nav items */}
+          {NAV_ITEMS.map((item) => {
+            const active = location.pathname === item.path;
+            return (
+              <Link key={item.path} to={item.path} style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px 16px 10px',
+                textDecoration: 'none',
+                minWidth: '64px',
+                borderBottom: active ? '2px solid #D4E600' : '2px solid transparent',
+              }}>
+                <span style={{ fontSize: '22px', lineHeight: 1 }}>{item.icon}</span>
+                <span style={{
+                  fontFamily: "'Barlow Condensed',sans-serif",
+                  fontSize: '9px', fontWeight: 700,
+                  letterSpacing: '0.06em', textTransform: 'uppercase',
+                  color: active ? '#D4E600' : 'rgba(240,237,228,0.3)',
+                  marginTop: '3px', whiteSpace: 'nowrap',
+                }}>{item.script}</span>
+              </Link>
+            );
+          })}
+
+          {/* Divider */}
+          <div style={{
+            width: '1px', background: 'rgba(255,255,255,0.08)',
+            margin: '10px 4px',
+          }} />
+
+          {/* Staff Portal — always visible on mobile */}
+          <a href="/staff/login" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            justifyContent: 'center',
+            padding: '8px 16px 10px',
+            textDecoration: 'none',
+            minWidth: '64px',
+            borderBottom: '2px solid transparent',
+          }}>
+            <span style={{ fontSize: '22px', lineHeight: 1 }}>🔐</span>
+            <span style={{
+              fontFamily: "'Barlow Condensed',sans-serif",
+              fontSize: '9px', fontWeight: 700,
+              letterSpacing: '0.06em', textTransform: 'uppercase',
+              color: 'rgba(212,230,0,0.45)',
+              marginTop: '3px', whiteSpace: 'nowrap',
+            }}>Staff</span>
+          </a>
+        </div>
       </nav>
+
+      <style>{`
+        .mobile-nav::-webkit-scrollbar { display: none; }
+      `}</style>
     </>
   );
 };
