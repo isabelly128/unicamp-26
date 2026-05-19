@@ -12,7 +12,7 @@ interface FeatureCard {
 }
 
 const FEATURE_CARDS: FeatureCard[] = [
-  { icon: '📖', label: 'CAMP',    labelScript: 'Booklet',    path: '/booklet',      desc: 'Program flow & schedule',     accent: '#D4E600' },
+  { icon: '📖', label: 'CAMP',    labelScript: 'Program',    path: '/booklet',      desc: 'Program flow & schedule',     accent: '#D4E600' },
   { icon: '🕊️', label: 'DAILY',  labelScript: 'Devotions',  path: '/devotions',    desc: 'Read · Reflect · Record',     accent: '#4A90D9' },
   { icon: '📝', label: 'SERMON',  labelScript: 'Notes',      path: '/sermons',      desc: 'Session notes & questions',   accent: '#D4E600' },
   { icon: '📸', label: 'CAMP',    labelScript: 'Photos',     path: '/photos',       desc: 'Auto-updating albums',        accent: '#5A8A3C' },
