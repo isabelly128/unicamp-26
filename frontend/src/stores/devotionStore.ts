@@ -1,185 +1,249 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Devotion, Reflection, SermonNote } from '../types';
 
-interface DevotionState {
-  devotions: Devotion[];
-  reflections: Reflection[];
-  sermonNotes: SermonNote[];
-  addDevotion: (devotion: Omit<Devotion, 'id' | 'uploadedAt'>) => void;
-  saveReflection: (devotionId: string, userId: string, content: string) => void;
-  getReflection: (devotionId: string, userId: string) => Reflection | undefined;
-  addSermonNote: (note: Omit<SermonNote, 'id' | 'uploadedAt'>) => void;
+// ── Local type definitions (mirrors src/types/index.ts) ────────────────────
+export interface DaySession {
+  time: string;
+  title: string;
+  description?: string;
+  icon: string;
+  type: 'session' | 'meal' | 'activity' | 'free' | 'devotion' | 'worship';
 }
 
-const INITIAL_DEVOTIONS: Devotion[] = [
+export interface CampDay {
+  day: number;
+  label: string;
+  date: string;
+  theme: string;
+  verse: string;
+  sessions: DaySession[];
+}
+
+export interface LodgingInfo {
+  venueName: string;
+  address: string;
+  directions: string;
+  mapsUrl: string;
+  checkIn: string;
+  checkOut: string;
+}
+
+export interface FoodSpot {
+  name: string;
+  type: 'meal' | 'supper' | 'htht';
+  description: string;
+  address: string;
+  openHours: string;
+}
+
+export interface Devotion {
+  id: string;
+  title: string;
+  day: number;
+  phase: 'pre' | 'during' | 'post';
+  pdfUrl: string;
+  uploadedAt: string;
+  uploadedBy: string;
+}
+
+export interface SermonNote {
+  id: string;
+  sessionTitle: string;
+  day: number;
+  pdfUrl: string;
+  reflectionQuestions: string[];
+  uploadedAt: string;
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
+const DEFAULT_SCHEDULE: CampDay[] = [
   {
-    id: 'pre1',
-    title: 'Pre-Camp Devotion — Prepare Your Heart',
-    day: 0,
-    phase: 'pre',
-    pdfUrl: 'https://example.com/devotion-pre.pdf',
-    uploadedAt: '2024-05-28T08:00:00Z',
-    uploadedBy: 'Sarah Tan',
+    day: 1, label: 'Day 1', date: 'Saturday, June 1',
+    theme: 'Encountering God', verse: 'Isaiah 6:1-8',
+    sessions: [
+      { time: '2:00 PM',  title: 'Registration & Check-In',       icon: '🏕️', type: 'activity' },
+      { time: '3:30 PM',  title: 'Camp Orientation',              description: 'Ground rules, safety briefing, room assignments', icon: '📋', type: 'activity' },
+      { time: '4:30 PM',  title: 'Ice Breaker Games',             description: 'Get to know your cabin mates!', icon: '🎮', type: 'activity' },
+      { time: '6:00 PM',  title: 'Dinner',                        icon: '🍽️', type: 'meal' },
+      { time: '7:30 PM',  title: 'Opening Worship',               icon: '🎵', type: 'worship' },
+      { time: '8:15 PM',  title: 'Session 1: The God Who Calls',  description: 'Speaker: Pastor David · Isaiah 6:1-8', icon: '📖', type: 'session' },
+      { time: '9:30 PM',  title: 'Cell Group Discussion',         icon: '👥', type: 'activity' },
+      { time: '10:30 PM', title: 'Night Devotion',                icon: '🕯️', type: 'devotion' },
+      { time: '11:00 PM', title: 'Lights Out',                    icon: '🌙', type: 'free' },
+    ],
   },
   {
-    id: 'd1',
-    title: 'Day 1 — Encountering God',
-    day: 1,
-    phase: 'during',
-    pdfUrl: 'https://example.com/devotion-day1.pdf',
-    uploadedAt: '2024-06-01T08:00:00Z',
-    uploadedBy: 'Sarah Tan',
+    day: 2, label: 'Day 2', date: 'Sunday, June 2',
+    theme: 'Walking in Faith', verse: 'Hebrews 11:1, 6',
+    sessions: [
+      { time: '7:00 AM',  title: 'Morning Devotion',              icon: '🌅', type: 'devotion' },
+      { time: '7:45 AM',  title: 'Breakfast',                     icon: '🍳', type: 'meal' },
+      { time: '9:00 AM',  title: 'Morning Worship',               icon: '🎵', type: 'worship' },
+      { time: '9:30 AM',  title: 'Session 2: Faith Over Fear',    description: 'Speaker: Pastor David', icon: '📖', type: 'session' },
+      { time: '10:45 AM', title: 'Small Group Prayer',            icon: '🙏', type: 'activity' },
+      { time: '12:00 PM', title: 'Lunch',                         icon: '🍱', type: 'meal' },
+      { time: '1:30 PM',  title: 'Free & Rec Time',               description: 'Swimming, sports, rest', icon: '🏊', type: 'free' },
+      { time: '3:30 PM',  title: 'Workshops',                     description: 'Choose: Evangelism / Spiritual Disciplines / Worship Leading', icon: '🛠️', type: 'activity' },
+      { time: '5:30 PM',  title: 'Dinner',                        icon: '🍽️', type: 'meal' },
+      { time: '7:30 PM',  title: 'Evening Worship & Ministry Time', icon: '🕊️', type: 'worship' },
+      { time: '9:30 PM',  title: 'Cell Group Sharing',            icon: '👥', type: 'activity' },
+      { time: '10:30 PM', title: 'Night Devotion',                icon: '🕯️', type: 'devotion' },
+      { time: '11:00 PM', title: 'Lights Out',                    icon: '🌙', type: 'free' },
+    ],
   },
   {
-    id: 'd2',
-    title: 'Day 2 — Walking in Faith',
-    day: 2,
-    phase: 'during',
-    pdfUrl: 'https://example.com/devotion-day2.pdf',
-    uploadedAt: '2024-06-02T08:00:00Z',
-    uploadedBy: 'Sarah Tan',
+    day: 3, label: 'Day 3', date: 'Monday, June 3',
+    theme: 'Community & Calling', verse: '1 Corinthians 12:12-27',
+    sessions: [
+      { time: '7:00 AM',  title: 'Morning Devotion',                  icon: '🌅', type: 'devotion' },
+      { time: '7:45 AM',  title: 'Breakfast',                         icon: '🍳', type: 'meal' },
+      { time: '9:00 AM',  title: 'Morning Worship',                   icon: '🎵', type: 'worship' },
+      { time: '9:30 AM',  title: 'Session 3: One Body, Many Parts',   description: 'Speaker: Elder James', icon: '📖', type: 'session' },
+      { time: '10:45 AM', title: 'Spiritual Gifts Discovery',         icon: '🎯', type: 'activity' },
+      { time: '12:00 PM', title: 'Lunch',                             icon: '🍱', type: 'meal' },
+      { time: '1:30 PM',  title: 'Outreach Project',                  icon: '❤️', type: 'activity' },
+      { time: '4:00 PM',  title: 'Testimony Sharing',                 icon: '🎤', type: 'activity' },
+      { time: '5:30 PM',  title: 'Dinner',                            icon: '🍽️', type: 'meal' },
+      { time: '7:00 PM',  title: 'Camp Night (Games & Talent Show)',  icon: '🌟', type: 'activity' },
+      { time: '9:30 PM',  title: 'Bonfire Worship',                   icon: '🔥', type: 'worship' },
+      { time: '11:00 PM', title: 'Lights Out',                        icon: '🌙', type: 'free' },
+    ],
   },
   {
-    id: 'd3',
-    title: 'Day 3 — Community & Calling',
-    day: 3,
-    phase: 'during',
-    pdfUrl: 'https://example.com/devotion-day3.pdf',
-    uploadedAt: '2024-06-03T08:00:00Z',
-    uploadedBy: 'Sarah Tan',
-  },
-  {
-    id: 'd4',
-    title: 'Day 4 — Sent & Commissioned',
-    day: 4,
-    phase: 'during',
-    pdfUrl: 'https://example.com/devotion-day4.pdf',
-    uploadedAt: '2024-06-04T08:00:00Z',
-    uploadedBy: 'Sarah Tan',
-  },
-  {
-    id: 'post1',
-    title: 'Post-Camp Devotion — Carrying the Fire',
-    day: 5,
-    phase: 'post',
-    pdfUrl: 'https://example.com/devotion-post.pdf',
-    uploadedAt: '2024-06-10T08:00:00Z',
-    uploadedBy: 'Sarah Tan',
+    day: 4, label: 'Day 4', date: 'Tuesday, June 4',
+    theme: 'Sent & Commissioned', verse: 'Matthew 28:18-20',
+    sessions: [
+      { time: '7:00 AM',  title: 'Morning Devotion',                   icon: '🌅', type: 'devotion' },
+      { time: '7:45 AM',  title: 'Breakfast',                          icon: '🍳', type: 'meal' },
+      { time: '9:00 AM',  title: 'Closing Worship',                    icon: '🎵', type: 'worship' },
+      { time: '9:30 AM',  title: 'Session 4: Go — You Are Sent',       description: 'Speaker: Pastor David', icon: '📖', type: 'session' },
+      { time: '10:45 AM', title: 'Commitment & Consecration',          icon: '✋', type: 'worship' },
+      { time: '11:30 AM', title: 'Cell Group Prayer & Commissioning',  icon: '🙏', type: 'activity' },
+      { time: '12:30 PM', title: 'Farewell Lunch',                     icon: '🍽️', type: 'meal' },
+      { time: '2:00 PM',  title: 'Check-Out',                          icon: '🏕️', type: 'activity' },
+      { time: '3:00 PM',  title: 'Depart',                             icon: '👋', type: 'free' },
+    ],
   },
 ];
 
-const INITIAL_SERMON_NOTES: SermonNote[] = [
-  {
-    id: 's1',
-    sessionTitle: 'Session 1: The God Who Calls',
-    day: 1,
-    pdfUrl: 'https://example.com/sermon1.pdf',
-    reflectionQuestions: [
-      'Where has God been calling you that you have been hesitant to respond?',
-      'What does it mean for you personally to say "Here I am, Lord"?',
-      'How can your cell group support you in this area this week?',
-    ],
-    uploadedAt: '2024-06-01T21:00:00Z',
-  },
-  {
-    id: 's2',
-    sessionTitle: 'Session 2: Faith Over Fear',
-    day: 2,
-    pdfUrl: 'https://example.com/sermon2.pdf',
-    reflectionQuestions: [
-      'What fears are currently holding you back from fully trusting God?',
-      'Share a time when stepping out in faith led to unexpected growth.',
-      'What is one step of faith God is inviting you to take this month?',
-    ],
-    uploadedAt: '2024-06-02T21:00:00Z',
-  },
-  {
-    id: 's3',
-    sessionTitle: 'Session 3: One Body, Many Parts',
-    day: 3,
-    pdfUrl: 'https://example.com/sermon3.pdf',
-    reflectionQuestions: [
-      'What spiritual gift do you sense God has given you, and are you using it?',
-      'How can you better serve the body of Christ in your everyday life?',
-      'Who in the church can you intentionally invest in this month?',
-    ],
-    uploadedAt: '2024-06-03T21:00:00Z',
-  },
-  {
-    id: 's4',
-    sessionTitle: 'Session 4: Go — You Are Sent',
-    day: 4,
-    pdfUrl: 'https://example.com/sermon4.pdf',
-    reflectionQuestions: [
-      'What is one specific way you will live out the Great Commission this week?',
-      'Who in your life needs to hear the Gospel, and how will you reach out to them?',
-      'What commitment are you making to God as you leave camp?',
-    ],
-    uploadedAt: '2024-06-04T21:00:00Z',
-  },
+const DEFAULT_LODGING: LodgingInfo = {
+  venueName:  'Camp Venue Name',
+  address:    '123 Camp Road, Singapore 000000',
+  directions: 'Take MRT to [Station]. Exit [Exit No.] and walk 5 min to the venue.',
+  mapsUrl:    'https://maps.google.com',
+  checkIn:    'Saturday, June 1 — 2:00 PM onwards',
+  checkOut:   'Tuesday, June 4 — by 3:00 PM',
+};
+
+const DEFAULT_FOOD: FoodSpot[] = [
+  { name: 'Venue Canteen',       type: 'meal',   description: 'All meals provided in the camp canteen',     address: 'Main venue',             openHours: 'Meal times only' },
+  { name: 'Nearby Coffee Shop',  type: 'supper', description: 'Supper options nearby — mixed economy food', address: '5 min walk from venue',  openHours: '6 PM – 12 AM' },
+  { name: 'Scenic Waterfront',   type: 'htht',   description: 'Great spot for quiet heart-to-heart talks',  address: '10 min walk from venue', openHours: 'Open 24 hrs' },
+  { name: 'Void Deck / BBQ Pit', type: 'htht',   description: 'Covered area for small group conversations', address: 'Within camp grounds',    openHours: 'Open 24 hrs' },
+];
+
+interface DevotionState {
+  devotions:        Devotion[];
+  sermonNotes:      SermonNote[];
+  packingListUrl:   string;
+  volDedicationUrl: string;
+  schedule:         CampDay[];
+  lodging:          LodgingInfo;
+  foodSpots:        FoodSpot[];
+
+  addDevotion:         (d: Omit<Devotion, 'id' | 'uploadedAt'>) => void;
+  addSermonNote:       (n: Omit<SermonNote, 'id' | 'uploadedAt'>) => void;
+  setPackingListUrl:   (url: string) => void;
+  setVolDedicationUrl: (url: string) => void;
+  updateDay:           (dayIndex: number, updated: CampDay) => void;
+  updateSession:       (dayIndex: number, sessionIndex: number, updated: Partial<DaySession>) => void;
+  addSession:          (dayIndex: number, session: DaySession) => void;
+  removeSession:       (dayIndex: number, sessionIndex: number) => void;
+  setLodging:          (info: LodgingInfo) => void;
+  setFoodSpots:        (spots: FoodSpot[]) => void;
+  updateFoodSpot:      (index: number, spot: FoodSpot) => void;
+}
+
+const INITIAL_DEVOTIONS: Devotion[] = [
+  { id: 'd1',   title: 'Day 1 — Encountering God',      day: 1, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd2',   title: 'Day 2 — Walking in Faith',      day: 2, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd3',   title: 'Day 3 — Community & Calling',   day: 3, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd4',   title: 'Day 4 — Sent & Commissioned',   day: 4, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'pre1', title: 'Pre-Camp — Prepare Your Heart', day: 0, phase: 'pre',    pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'post1',title: 'Post-Camp — Carrying the Fire', day: 5, phase: 'post',   pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+];
+
+const INITIAL_SERMONS: SermonNote[] = [
+  { id: 's1', sessionTitle: 'Session 1: The God Who Calls', day: 1, pdfUrl: '', reflectionQuestions: ['Where has God been calling you?', 'What does it mean to say "Here I am, Lord"?'], uploadedAt: '' },
+  { id: 's2', sessionTitle: 'Session 2: Faith Over Fear',   day: 2, pdfUrl: '', reflectionQuestions: ['What fears hold you back from trusting God?', 'What step of faith is God inviting you to take?'], uploadedAt: '' },
 ];
 
 export const useDevotionStore = create<DevotionState>()(
   persist(
-    (set, get) => ({
-      devotions: INITIAL_DEVOTIONS,
-      reflections: [],
-      sermonNotes: INITIAL_SERMON_NOTES,
+    (set) => ({
+      devotions:        INITIAL_DEVOTIONS,
+      sermonNotes:      INITIAL_SERMONS,
+      packingListUrl:   '',
+      volDedicationUrl: '',
+      schedule:         DEFAULT_SCHEDULE,
+      lodging:          DEFAULT_LODGING,
+      foodSpots:        DEFAULT_FOOD,
 
-      addDevotion: (devotion: Omit<Devotion, 'id' | 'uploadedAt'>): void => {
-        const newDevotion: Devotion = {
-          ...devotion,
-          id: `d${Date.now()}`,
-          uploadedAt: new Date().toISOString(),
-        };
-        set((state: DevotionState) => ({
-          devotions: [...state.devotions, newDevotion],
-        }));
-      },
+      addDevotion: (d: Omit<Devotion, 'id' | 'uploadedAt'>) =>
+        set((s: DevotionState) => ({
+          devotions: [...s.devotions, { ...d, id: `d${Date.now()}`, uploadedAt: new Date().toISOString() }],
+        })),
 
-      saveReflection: (devotionId: string, userId: string, content: string): void => {
-        const existing = get().reflections.find(
-          (r: Reflection) => r.devotionId === devotionId && r.userId === userId
-        );
-        if (existing) {
-          set((state: DevotionState) => ({
-            reflections: state.reflections.map((r: Reflection) =>
-              r.id === existing.id
-                ? { ...r, content, savedAt: new Date().toISOString() }
-                : r
-            ),
-          }));
-        } else {
-          const newReflection: Reflection = {
-            id: `r${Date.now()}`,
-            devotionId,
-            userId,
-            content,
-            savedAt: new Date().toISOString(),
-          };
-          set((state: DevotionState) => ({
-            reflections: [...state.reflections, newReflection],
-          }));
-        }
-      },
+      addSermonNote: (n: Omit<SermonNote, 'id' | 'uploadedAt'>) =>
+        set((s: DevotionState) => ({
+          sermonNotes: [...s.sermonNotes, { ...n, id: `sn${Date.now()}`, uploadedAt: new Date().toISOString() }],
+        })),
 
-      getReflection: (devotionId: string, userId: string): Reflection | undefined => {
-        return get().reflections.find(
-          (r: Reflection) => r.devotionId === devotionId && r.userId === userId
-        );
-      },
+      setPackingListUrl:   (url: string) => set({ packingListUrl: url }),
+      setVolDedicationUrl: (url: string) => set({ volDedicationUrl: url }),
 
-      addSermonNote: (note: Omit<SermonNote, 'id' | 'uploadedAt'>): void => {
-        const newNote: SermonNote = {
-          ...note,
-          id: `s${Date.now()}`,
-          uploadedAt: new Date().toISOString(),
-        };
-        set((state: DevotionState) => ({
-          sermonNotes: [...state.sermonNotes, newNote],
-        }));
-      },
+      updateDay: (dayIndex: number, updated: CampDay) =>
+        set((s: DevotionState) => ({
+          schedule: s.schedule.map((d: CampDay, i: number) => i === dayIndex ? updated : d),
+        })),
+
+      updateSession: (dayIndex: number, sessionIndex: number, updated: Partial<DaySession>) =>
+        set((s: DevotionState) => ({
+          schedule: s.schedule.map((d: CampDay, di: number) =>
+            di !== dayIndex ? d : {
+              ...d,
+              sessions: d.sessions.map((sess: DaySession, si: number) =>
+                si !== sessionIndex ? sess : { ...sess, ...updated }
+              ),
+            }
+          ),
+        })),
+
+      addSession: (dayIndex: number, session: DaySession) =>
+        set((s: DevotionState) => ({
+          schedule: s.schedule.map((d: CampDay, i: number) =>
+            i !== dayIndex ? d : { ...d, sessions: [...d.sessions, session] }
+          ),
+        })),
+
+      removeSession: (dayIndex: number, sessionIndex: number) =>
+        set((s: DevotionState) => ({
+          schedule: s.schedule.map((d: CampDay, di: number) =>
+            di !== dayIndex ? d : {
+              ...d,
+              sessions: d.sessions.filter((_: DaySession, si: number) => si !== sessionIndex),
+            }
+          ),
+        })),
+
+      setLodging: (info: LodgingInfo) => set({ lodging: info }),
+
+      setFoodSpots: (spots: FoodSpot[]) => set({ foodSpots: spots }),
+
+      updateFoodSpot: (index: number, spot: FoodSpot) =>
+        set((s: DevotionState) => ({
+          foodSpots: s.foodSpots.map((f: FoodSpot, i: number) => i === index ? spot : f),
+        })),
     }),
     { name: 'devotion-store' }
   )

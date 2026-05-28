@@ -11,7 +11,7 @@ export interface User {
 export interface Devotion {
   id: string;
   title: string;
-  day: number; // 1-4
+  day: number;
   phase: 'pre' | 'during' | 'post';
   pdfUrl: string;
   uploadedAt: string;
@@ -38,7 +38,7 @@ export interface SermonNote {
 export interface PrayerRequest {
   id: string;
   content: string;
-  submittedBy: string; // userId
+  submittedBy: string;
   submittedAt: string;
   isAnonymous: boolean;
   status: 'pending' | 'prayed';
@@ -60,12 +60,6 @@ export interface Thanksgiving {
   isAnonymous: boolean;
 }
 
-export interface Blessing {
-  id: string;
-  prompt: string;
-  day: number;
-}
-
 export interface PhotoAlbum {
   id: string;
   title: string;
@@ -74,9 +68,45 @@ export interface PhotoAlbum {
   updatedAt: string;
 }
 
-export interface NavItem {
-  label: string;
-  path: string;
+// ── Booklet / Schedule types ──────────────────────────────────────────────────
+
+export interface BookletExtra {
+  type: 'packing-list' | 'vol-dedication';
+  pdfUrl: string;
+  uploadedAt: string;
+  uploadedBy: string;
+}
+
+export interface DaySession {
+  time: string;
+  title: string;
+  description?: string;
   icon: string;
-  requiredRole?: UserRole[];
+  type: 'session' | 'meal' | 'activity' | 'free' | 'devotion' | 'worship';
+}
+
+export interface CampDay {
+  day: number;
+  label: string;
+  date: string;
+  theme: string;
+  verse: string;
+  sessions: DaySession[];
+}
+
+export interface LodgingInfo {
+  venueName: string;
+  address: string;
+  directions: string;
+  mapsUrl: string;
+  checkIn: string;
+  checkOut: string;
+}
+
+export interface FoodSpot {
+  name: string;
+  type: 'meal' | 'supper' | 'htht';
+  description: string;
+  address: string;
+  openHours: string;
 }
