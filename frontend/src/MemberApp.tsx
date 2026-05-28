@@ -2,18 +2,14 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MemberNavbar } from './components/Navigation/MemberNavbar';
 
-import { HomePage }        from './pages/HomePage';
-import { BookletPage }     from './pages/BookletPage';
-import { DevotionsPage }   from './pages/DevotionsPage';
-import { SermonsPage }     from './pages/SermonsPage';
-import { PhotosPage }      from './pages/PhotosPage';
-import { PrayerPage }      from './pages/PrayerPage';
-import { ConvictionsPage } from './pages/ConvictionsPage';
-import { ThanksgivingPage }from './pages/ThanksgivingPage';
-import { BlessingsPage }   from './pages/BlessingsPage';
+import { HomePage }       from './pages/HomePage';
+import { BookletPage }    from './pages/BookletPage';
+import { DevotionsPage }  from './pages/DevotionsPage';
+import { SermonsPage }    from './pages/SermonsPage';
+import { PhotosPage }     from './pages/PhotosPage';
+import { PrayerPage }     from './pages/PrayerPage';
+import { TestimonyPage }  from './pages/TestimonyPage';
 
-// Member site shares the same global CSS defined in App.tsx
-// but we import it inline here so it works standalone too
 const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Barlow:wght@300;400;500;600&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,7 +28,7 @@ const GLOBAL_CSS = `
   }
   html,body,#root { height:100%; min-height:100vh; }
   body { background:var(--bg-primary); color:var(--text-primary); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
-  ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-thumb { background:rgba(212,230,0,0.15); border-radius:3px; }
+  ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:rgba(212,230,0,0.15);border-radius:3px;}
   .app-layout { display:flex; min-height:100vh; }
   .app-main { flex:1; margin-left:220px; min-height:100vh; overflow-y:auto; }
   @media(max-width:768px){ .app-main{ margin-left:0; padding-bottom:80px; } .sidebar{ display:none!important; } .mobile-nav{ display:flex!important; } }
@@ -47,16 +43,14 @@ export const MemberApp: React.FC = () => (
         <MemberNavbar />
         <main className="app-main">
           <Routes>
-            <Route path="/"             element={<HomePage />} />
-            <Route path="/booklet"      element={<BookletPage />} />
-            <Route path="/devotions"    element={<DevotionsPage />} />
-            <Route path="/sermons"      element={<SermonsPage />} />
-            <Route path="/photos"       element={<PhotosPage />} />
-            <Route path="/prayer"       element={<PrayerPage />} />
-            <Route path="/convictions"  element={<ConvictionsPage />} />
-            <Route path="/thanksgiving" element={<ThanksgivingPage />} />
-            <Route path="/blessings"    element={<BlessingsPage />} />
-            <Route path="*"             element={<Navigate to="/" replace />} />
+            <Route path="/"            element={<HomePage />} />
+            <Route path="/booklet"     element={<BookletPage />} />
+            <Route path="/devotions"   element={<DevotionsPage />} />
+            <Route path="/sermons"     element={<SermonsPage />} />
+            <Route path="/photos"      element={<PhotosPage />} />
+            <Route path="/prayer"      element={<PrayerPage />} />
+            <Route path="/testimony"   element={<TestimonyPage />} />
+            <Route path="*"            element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>

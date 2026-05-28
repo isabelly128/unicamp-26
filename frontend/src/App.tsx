@@ -2,19 +2,17 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
 
-import { Navbar }           from './components/Navigation/Navbar';
-import { ProtectedRoute }   from './components/Auth/ProtectedRoute';
+import { Navbar }          from './components/Navigation/Navbar';
+import { ProtectedRoute }  from './components/Auth/ProtectedRoute';
 
-import { LoginPage }        from './pages/LoginPage';
-import { HomePage }         from './pages/HomePage';
-import { BookletPage }      from './pages/BookletPage';
-import { DevotionsPage }    from './pages/DevotionsPage';
-import { SermonsPage }      from './pages/SermonsPage';
-import { PhotosPage }       from './pages/PhotosPage';
-import { PrayerPage }       from './pages/PrayerPage';
-import { ConvictionsPage }  from './pages/ConvictionsPage';
-import { ThanksgivingPage } from './pages/ThanksgivingPage';
-import { BlessingsPage }    from './pages/BlessingsPage';
+import { LoginPage }       from './pages/LoginPage';
+import { HomePage }        from './pages/HomePage';
+import { BookletPage }     from './pages/BookletPage';
+import { DevotionsPage }   from './pages/DevotionsPage';
+import { SermonsPage }     from './pages/SermonsPage';
+import { PhotosPage }      from './pages/PhotosPage';
+import { PrayerPage }      from './pages/PrayerPage';
+import { TestimonyPage }   from './pages/TestimonyPage';
 
 const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Barlow:wght@300;400;500;600&display=swap');
@@ -54,35 +52,26 @@ export const App: React.FC = () => {
   return (
     <>
       <style>{GLOBAL_CSS}</style>
-      {/*
-        basename="/staff" means every <Link to="/booklet"> becomes /staff/booklet
-        and every route path is matched relative to /staff — no manual prefixing needed.
-      */}
       <BrowserRouter basename="/staff">
         <Routes>
-          {/* /staff/login */}
           <Route
             path="/login"
             element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
           />
-
-          {/* All protected staff pages */}
           <Route
             path="/*"
             element={
               <ProtectedRoute>
                 <Layout>
                   <Routes>
-                    <Route path="/"             element={<HomePage />} />
-                    <Route path="/booklet"      element={<BookletPage />} />
-                    <Route path="/devotions"    element={<DevotionsPage />} />
-                    <Route path="/sermons"      element={<SermonsPage />} />
-                    <Route path="/photos"       element={<PhotosPage />} />
-                    <Route path="/prayer"       element={<PrayerPage />} />
-                    <Route path="/convictions"  element={<ConvictionsPage />} />
-                    <Route path="/thanksgiving" element={<ThanksgivingPage />} />
-                    <Route path="/blessings"    element={<BlessingsPage />} />
-                    <Route path="*"             element={<Navigate to="/" replace />} />
+                    <Route path="/"            element={<HomePage />} />
+                    <Route path="/booklet"     element={<BookletPage />} />
+                    <Route path="/devotions"   element={<DevotionsPage />} />
+                    <Route path="/sermons"     element={<SermonsPage />} />
+                    <Route path="/photos"      element={<PhotosPage />} />
+                    <Route path="/prayer"      element={<PrayerPage />} />
+                    <Route path="/testimony"   element={<TestimonyPage />} />
+                    <Route path="*"            element={<Navigate to="/" replace />} />
                   </Routes>
                 </Layout>
               </ProtectedRoute>

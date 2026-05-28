@@ -8,9 +8,7 @@ const NAV_ITEMS = [
   { label: 'SERMON', script: 'Notes',       path: '/sermons',      icon: '📝' },
   { label: 'CAMP',   script: 'Photos',      path: '/photos',       icon: '📸' },
   { label: 'PRAYER', script: 'Wall',        path: '/prayer',       icon: '🙏' },
-  { label: 'YOUR',   script: 'Convictions', path: '/convictions',  icon: '💛' },
-  { label: 'THANKS', script: 'giving',      path: '/thanksgiving', icon: '🌿' },
-  { label: 'DAILY',  script: 'Blessings',   path: '/blessings',    icon: '✨' },
+  { label: 'SHARED',   script: 'Testimony', path: '/testimony',  icon: '✝️' },
 ];
 
 const QUICK_LINKS = [
