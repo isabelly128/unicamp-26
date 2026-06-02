@@ -97,9 +97,9 @@ export const LoginPage: FC = () => {
           }}>UNICAMP 2026 — Staff Portal</div>
 
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'8px' }}>HERE</div>
-            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#D4E600', marginBottom:'8px' }}>I Am,</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'32px' }}>LORD.</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'8px' }}>STAY</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#D4E600', marginBottom:'8px' }}>The</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'32px' }}>COURSE</div>
             <p style={{ fontFamily:"'Barlow',sans-serif", fontSize:'13px', color:'rgba(240,237,228,0.4)', fontStyle:'italic', lineHeight:1.7, maxWidth:'340px' }}>
               "Then I heard the voice of the Lord saying, 'Whom shall I send?' And I said, 'Here am I. Send me!'" — Isaiah 6:8
             </p>
@@ -129,10 +129,10 @@ export const LoginPage: FC = () => {
 
             {/* Big type — mobile only */}
             <div style={{ marginBottom: '4px' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'52px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em' }}>HERE </span>
-              <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'40px', lineHeight:0.9, color:'#D4E600' }}>I Am,</span>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'52px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em' }}>STAY </span>
+              <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'40px', lineHeight:0.9, color:'#D4E600' }}>The,</span>
             </div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'52px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'20px' }}>LORD.</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'52px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'20px' }}>COURSE</div>
 
             <a href="/" style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
