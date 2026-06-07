@@ -2,6 +2,9 @@ import React, { CSSProperties, FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
+const VERSE = '13 "Enter through the narrow gate. For wide is the gate and broad is the road that leads to destruction, and many enter through it. 14 But small is the gate and narrow the road that leads to life, and only a few find it." — Matthew 7:13-14';
+const THEME = 'Stay the Course';
+
 export const LoginPage: FC = () => {
   const [email, setEmail]       = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -28,7 +31,6 @@ export const LoginPage: FC = () => {
     fontSize: '15px', fontFamily: "'Barlow',sans-serif",
     outline: 'none', boxSizing: 'border-box', letterSpacing: '0.02em',
   };
-
   const labelStyle: CSSProperties = {
     display: 'block', fontSize: '11px', fontWeight: 600,
     letterSpacing: '0.12em', textTransform: 'uppercase',
@@ -39,146 +41,74 @@ export const LoginPage: FC = () => {
   return (
     <>
       <style>{`
-        .login-wrapper {
-          min-height: 100vh;
-          display: flex;
-          align-items: stretch;
-          background: #0A1128;
-          overflow: hidden;
-        }
-        .login-left {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 64px;
-          position: relative;
-          overflow: hidden;
-          background: linear-gradient(160deg,#0D1B4A 0%,#0A1128 60%,#060D1E 100%);
-        }
-        .login-right {
-          width: 420px;
-          flex-shrink: 0;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          padding: 64px 48px;
-          background: #060D1E;
-          border-left: 1px solid rgba(255,255,255,0.06);
-        }
-        /* ── Mobile: hide left panel, full-width form ── */
-        @media (max-width: 640px) {
-          .login-left { display: none; }
-          .login-right {
-            width: 100%;
-            padding: 48px 28px 60px;
-            border-left: none;
-            justify-content: flex-start;
-            padding-top: 56px;
-          }
+        .login-wrapper { min-height:100vh; display:flex; align-items:stretch; background:#0A1128; overflow:hidden; }
+        .login-left { flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:64px; position:relative; overflow:hidden; background:linear-gradient(160deg,#0D1B4A 0%,#0A1128 60%,#060D1E 100%); }
+        .login-right { width:420px; flex-shrink:0; display:flex; flex-direction:column; justify-content:center; padding:64px 48px; background:#060D1E; border-left:1px solid rgba(255,255,255,0.06); }
+        @media(max-width:640px){
+          .login-left { display:none; }
+          .login-right { width:100%; padding:48px 24px 60px; border-left:none; justify-content:flex-start; padding-top:52px; }
+          .login-mobile-header { display:block !important; }
         }
       `}</style>
 
       <div className="login-wrapper">
 
-        {/* Left — editorial type (desktop only) */}
+        {/* Left — editorial (desktop only) */}
         <div className="login-left">
-          <div style={{
-            position: 'absolute', top: '-80px', left: '-80px',
-            width: '400px', height: '400px',
-            background: 'radial-gradient(circle,rgba(212,230,0,0.08) 0%,transparent 70%)',
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute', top: '40px', left: '64px',
-            fontSize: '11px', letterSpacing: '0.2em',
-            color: 'rgba(212,230,0,0.6)', fontWeight: 600,
-            textTransform: 'uppercase', fontFamily: "'Barlow Condensed',sans-serif",
-          }}>UNICAMP 2026 — Staff Portal</div>
-
+          <div style={{ position:'absolute', top:'-80px', left:'-80px', width:'400px', height:'400px', background:'radial-gradient(circle,rgba(247,246,221,0.07) 0%,transparent 70%)', pointerEvents:'none' }}/>
+          <div style={{ position:'absolute', top:'40px', left:'64px', fontSize:'11px', letterSpacing:'0.2em', color:'rgba(247,246,221,0.6)', fontWeight:600, textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif" }}>
+            UNICAMP 2026 — Staff Portal
+          </div>
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'8px' }}>STAY</div>
-            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#D4E600', marginBottom:'8px' }}>The</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'32px' }}>COURSE</div>
-            <p style={{ fontFamily:"'Barlow',sans-serif", fontSize:'13px', color:'rgba(240,237,228,0.4)', fontStyle:'italic', lineHeight:1.7, maxWidth:'340px' }}>
-              "Then I heard the voice of the Lord saying, 'Whom shall I send?' And I said, 'Here am I. Send me!'" — Isaiah 6:8
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'8px' }}>STAY THE</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#f7f6dd', marginBottom:'8px' }}>Course.</div>
+            <p style={{ fontFamily:"'Barlow',sans-serif", fontSize:'13px', color:'rgba(240,237,228,0.4)', fontStyle:'italic', lineHeight:1.8, maxWidth:'360px', marginTop:'20px' }}>
+              {VERSE}
             </p>
-            <div style={{ marginTop: '32px' }}>
-              <a href="/" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                padding: '10px 20px', borderRadius: '4px',
-                border: '1px solid rgba(212,230,0,0.2)',
-                color: 'rgba(212,230,0,0.6)', textDecoration: 'none',
-                fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em',
-                textTransform: 'uppercase', fontFamily: "'Barlow Condensed',sans-serif",
-              }}>← Back to Member Site</a>
+            <div style={{ marginTop:'32px' }}>
+              <a href="/" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'10px 20px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.2)', color:'rgba(247,246,221,0.6)', textDecoration:'none', fontSize:'11px', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif" }}>
+                ← Back to Member Site
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Right — login form */}
+        {/* Right — form */}
         <div className="login-right">
 
-          {/* Mobile-only header (replaces hidden left panel) */}
-          <div style={{ marginBottom: '36px' }}>
-            <div style={{
-              fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900,
-              fontSize: '13px', letterSpacing: '0.2em', textTransform: 'uppercase',
-              color: 'rgba(212,230,0,0.6)', marginBottom: '16px',
-            }}>UNICAMP 2026</div>
-
-            {/* Big type — mobile only */}
-            <div style={{ marginBottom: '4px' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'52px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em' }}>STAY </span>
-              <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'40px', lineHeight:0.9, color:'#D4E600' }}>The,</span>
-            </div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'52px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'20px' }}>COURSE</div>
-
-            <a href="/" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '4px',
-              border: '1px solid rgba(212,230,0,0.2)',
-              color: 'rgba(212,230,0,0.5)', textDecoration: 'none',
-              fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em',
-              textTransform: 'uppercase', fontFamily: "'Barlow Condensed',sans-serif",
-            }}>← Member Site</a>
+          {/* Mobile-only mini header */}
+          <div style={{ display:'none', marginBottom:'32px' }} className="login-mobile-header">
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(247,246,221,0.5)', marginBottom:'12px' }}>UNICAMP 2026</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'40px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', marginBottom:'4px' }}>STAY THE</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'32px', lineHeight:1, color:'#f7f6dd', marginBottom:'20px' }}>Course.</div>
+            <a href="/" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.2)', color:'rgba(247,246,221,0.5)', textDecoration:'none', fontSize:'10px', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif" }}>
+              ← Member Site
+            </a>
           </div>
 
-          {/* Form header */}
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'12px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#D4E600', marginBottom:'16px' }}>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'12px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'16px' }}>
             Staff Access Only
           </div>
-          <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'38px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#F0EDE4', marginBottom:'6px', lineHeight:1 }}>
-            Sign In
-          </h2>
-          <p style={{ fontSize:'13px', color:'rgba(240,237,228,0.35)', marginBottom:'28px', fontFamily:"'Barlow',sans-serif" }}>
+          <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'38px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#F0EDE4', marginBottom:'6px', lineHeight:1 }}>Sign In</h2>
+          <p style={{ fontSize:'13px', color:'rgba(240,237,228,0.35)', marginBottom:'32px', fontFamily:"'Barlow',sans-serif" }}>
             For comms, pastoral &amp; admin team
           </p>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom:'16px' }}>
               <label style={labelStyle}>Email</label>
-              <input type="email" value={email} required onChange={(e) => setEmail(e.target.value)} placeholder="your@camp.sg" style={inputStyle} />
+              <input type="email" value={email} required onChange={(e) => setEmail(e.target.value)} placeholder="your@camp.sg" style={inputStyle}/>
             </div>
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom:'24px' }}>
               <label style={labelStyle}>Password</label>
-              <input type="password" value={password} required onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle} />
+              <input type="password" value={password} required onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={inputStyle}/>
             </div>
 
             {error && (
-              <div style={{ background:'rgba(220,80,80,0.08)', border:'1px solid rgba(220,80,80,0.25)', borderRadius:'4px', padding:'10px 14px', marginBottom:'16px', fontSize:'13px', color:'#e07070', fontFamily:"'Barlow',sans-serif" }}>
-                {error}
-              </div>
+              <div style={{ background:'rgba(220,80,80,0.08)', border:'1px solid rgba(220,80,80,0.25)', borderRadius:'4px', padding:'10px 14px', marginBottom:'16px', fontSize:'13px', color:'#e07070', fontFamily:"'Barlow',sans-serif" }}>{error}</div>
             )}
 
-            <button type="submit" disabled={loading} style={{
-              width:'100%', padding:'16px', borderRadius:'4px', border:'none',
-              background: loading ? 'rgba(255,255,255,0.08)' : '#D4E600',
-              color: loading ? 'rgba(240,237,228,0.3)' : '#0A1128',
-              fontSize:'13px', fontWeight:800, fontFamily:"'Barlow Condensed',sans-serif",
-              letterSpacing:'0.15em', textTransform:'uppercase',
-              cursor: loading ? 'not-allowed' : 'pointer', transition:'background 0.15s',
-            }}>
+            <button type="submit" disabled={loading} style={{ width:'100%', padding:'16px', borderRadius:'4px', border:'none', background: loading ? 'rgba(255,255,255,0.08)' : '#f7f6dd', color: loading ? 'rgba(240,237,228,0.3)' : '#0A1128', fontSize:'13px', fontWeight:800, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.15em', textTransform:'uppercase', cursor: loading ? 'not-allowed' : 'pointer', transition:'background 0.15s' }}>
               {loading ? 'Signing in…' : 'Enter Staff Portal →'}
             </button>
           </form>

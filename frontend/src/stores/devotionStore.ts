@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// ── Local type definitions (mirrors src/types/index.ts) ────────────────────
+// ── Type definitions ──────────────────────────────────────────────────────────
 export interface DaySession {
   time: string;
   title: string;
@@ -54,22 +54,22 @@ export interface SermonNote {
   reflectionQuestions: string[];
   uploadedAt: string;
 }
-// ──────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 const DEFAULT_SCHEDULE: CampDay[] = [
   {
     day: 1, label: 'Day 1', date: 'Saturday, June 1',
     theme: 'Encountering God', verse: 'Isaiah 6:1-8',
     sessions: [
-      { time: '2:00 PM',  title: 'Registration & Check-In',       icon: '🏕️', type: 'activity' },
-      { time: '3:30 PM',  title: 'Camp Orientation',              description: 'Ground rules, safety briefing, room assignments', icon: '📋', type: 'activity' },
-      { time: '4:30 PM',  title: 'Ice Breaker Games',             description: 'Get to know your cabin mates!', icon: '🎮', type: 'activity' },
-      { time: '6:00 PM',  title: 'Dinner',                        icon: '🍽️', type: 'meal' },
-      { time: '7:30 PM',  title: 'Opening Worship',               icon: '🎵', type: 'worship' },
-      { time: '8:15 PM',  title: 'Session 1: The God Who Calls',  description: 'Speaker: Pastor David · Isaiah 6:1-8', icon: '📖', type: 'session' },
-      { time: '9:30 PM',  title: 'Cell Group Discussion',         icon: '👥', type: 'activity' },
-      { time: '10:30 PM', title: 'Night Devotion',                icon: '🕯️', type: 'devotion' },
-      { time: '11:00 PM', title: 'Lights Out',                    icon: '🌙', type: 'free' },
+      { time: '2:00 PM',  title: 'Registration & Check-In',      icon: '🏕️', type: 'activity' },
+      { time: '3:30 PM',  title: 'Camp Orientation',             description: 'Ground rules, safety briefing, room assignments', icon: '📋', type: 'activity' },
+      { time: '4:30 PM',  title: 'Ice Breaker Games',            description: 'Get to know your cabin mates!', icon: '🎮', type: 'activity' },
+      { time: '6:00 PM',  title: 'Dinner',                       icon: '🍽️', type: 'meal' },
+      { time: '7:30 PM',  title: 'Opening Worship',              icon: '🎵', type: 'worship' },
+      { time: '8:15 PM',  title: 'Session 1: The God Who Calls', description: 'Speaker: Pastor David · Isaiah 6:1-8', icon: '📖', type: 'session' },
+      { time: '9:30 PM',  title: 'Cell Group Discussion',        icon: '👥', type: 'activity' },
+      { time: '10:30 PM', title: 'Night Devotion',               icon: '🕯️', type: 'devotion' },
+      { time: '11:00 PM', title: 'Lights Out',                   icon: '🌙', type: 'free' },
     ],
   },
   {
@@ -152,7 +152,11 @@ interface DevotionState {
   foodSpots:        FoodSpot[];
 
   addDevotion:         (d: Omit<Devotion, 'id' | 'uploadedAt'>) => void;
+  updateDevotion:      (id: string, updates: Partial<Omit<Devotion, 'id'>>) => void;
+  removeDevotion:      (id: string) => void;
   addSermonNote:       (n: Omit<SermonNote, 'id' | 'uploadedAt'>) => void;
+  updateSermonNote:    (id: string, updates: Partial<Omit<SermonNote, 'id'>>) => void;
+  removeSermonNote:    (id: string) => void;
   setPackingListUrl:   (url: string) => void;
   setVolDedicationUrl: (url: string) => void;
   updateDay:           (dayIndex: number, updated: CampDay) => void;
@@ -174,8 +178,22 @@ const INITIAL_DEVOTIONS: Devotion[] = [
 ];
 
 const INITIAL_SERMONS: SermonNote[] = [
-  { id: 's1', sessionTitle: 'Session 1: The God Who Calls', day: 1, pdfUrl: '', reflectionQuestions: ['Where has God been calling you?', 'What does it mean to say "Here I am, Lord"?'], uploadedAt: '' },
-  { id: 's2', sessionTitle: 'Session 2: Faith Over Fear',   day: 2, pdfUrl: '', reflectionQuestions: ['What fears hold you back from trusting God?', 'What step of faith is God inviting you to take?'], uploadedAt: '' },
+  {
+    id: 's1', sessionTitle: 'Session 1: The God Who Calls', day: 1, pdfUrl: '',
+    reflectionQuestions: [
+      'Where has God been calling you that you have been hesitant to respond?',
+      'What does staying the course look like for you this season?',
+    ],
+    uploadedAt: '',
+  },
+  {
+    id: 's2', sessionTitle: 'Session 2: Faith Over Fear', day: 2, pdfUrl: '',
+    reflectionQuestions: [
+      'What fears are currently holding you back from fully trusting God?',
+      'What is one step of faith God is inviting you to take this month?',
+    ],
+    uploadedAt: '',
+  },
 ];
 
 export const useDevotionStore = create<DevotionState>()(
@@ -194,9 +212,29 @@ export const useDevotionStore = create<DevotionState>()(
           devotions: [...s.devotions, { ...d, id: `d${Date.now()}`, uploadedAt: new Date().toISOString() }],
         })),
 
+      updateDevotion: (id: string, updates: Partial<Omit<Devotion, 'id'>>) =>
+        set((s: DevotionState) => ({
+          devotions: s.devotions.map((d: Devotion) => d.id === id ? { ...d, ...updates } : d),
+        })),
+
+      removeDevotion: (id: string) =>
+        set((s: DevotionState) => ({
+          devotions: s.devotions.filter((d: Devotion) => d.id !== id),
+        })),
+
       addSermonNote: (n: Omit<SermonNote, 'id' | 'uploadedAt'>) =>
         set((s: DevotionState) => ({
           sermonNotes: [...s.sermonNotes, { ...n, id: `sn${Date.now()}`, uploadedAt: new Date().toISOString() }],
+        })),
+
+      updateSermonNote: (id: string, updates: Partial<Omit<SermonNote, 'id'>>) =>
+        set((s: DevotionState) => ({
+          sermonNotes: s.sermonNotes.map((n: SermonNote) => n.id === id ? { ...n, ...updates } : n),
+        })),
+
+      removeSermonNote: (id: string) =>
+        set((s: DevotionState) => ({
+          sermonNotes: s.sermonNotes.filter((n: SermonNote) => n.id !== id),
         })),
 
       setPackingListUrl:   (url: string) => set({ packingListUrl: url }),
