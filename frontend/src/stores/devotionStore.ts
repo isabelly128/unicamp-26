@@ -145,8 +145,8 @@ const DEFAULT_FOOD: FoodSpot[] = [
 interface DevotionState {
   devotions:        Devotion[];
   sermonNotes:      SermonNote[];
-  packingListUrl:   string;
-  volDedicationUrl: string;
+  packingListText:  string;
+  volDedicationText: string;
   schedule:         CampDay[];
   lodging:          LodgingInfo;
   foodSpots:        FoodSpot[];
@@ -157,8 +157,8 @@ interface DevotionState {
   addSermonNote:       (n: Omit<SermonNote, 'id' | 'uploadedAt'>) => void;
   updateSermonNote:    (id: string, updates: Partial<Omit<SermonNote, 'id'>>) => void;
   removeSermonNote:    (id: string) => void;
-  setPackingListUrl:   (url: string) => void;
-  setVolDedicationUrl: (url: string) => void;
+  setPackingListText:  (text: string) => void;
+  setVolDedicationText: (text: string) => void;
   updateDay:           (dayIndex: number, updated: CampDay) => void;
   updateSession:       (dayIndex: number, sessionIndex: number, updated: Partial<DaySession>) => void;
   addSession:          (dayIndex: number, session: DaySession) => void;
@@ -201,8 +201,8 @@ export const useDevotionStore = create<DevotionState>()(
     (set) => ({
       devotions:        INITIAL_DEVOTIONS,
       sermonNotes:      INITIAL_SERMONS,
-      packingListUrl:   '',
-      volDedicationUrl: '',
+      packingListText:  '',
+      volDedicationText: '',
       schedule:         DEFAULT_SCHEDULE,
       lodging:          DEFAULT_LODGING,
       foodSpots:        DEFAULT_FOOD,
@@ -237,8 +237,8 @@ export const useDevotionStore = create<DevotionState>()(
           sermonNotes: s.sermonNotes.filter((n: SermonNote) => n.id !== id),
         })),
 
-      setPackingListUrl:   (url: string) => set({ packingListUrl: url }),
-      setVolDedicationUrl: (url: string) => set({ volDedicationUrl: url }),
+      setPackingListText:  (text: string) => set({ packingListText: text }),
+      setVolDedicationText: (text: string) => set({ volDedicationText: text }),
 
       updateDay: (dayIndex: number, updated: CampDay) =>
         set((s: DevotionState) => ({

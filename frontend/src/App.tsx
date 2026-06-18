@@ -20,23 +20,23 @@ const GLOBAL_CSS = `
   :root {
     --bg-primary:#0A1128; --bg-deep:#060D1E; --sidebar-bg:#0D1635;
     --card-bg:#111D3E; --card-alt:#0F1A36; --input-bg:#162040;
-    --border:rgba(255,255,255,0.08); --border-accent:rgba(212,230,0,0.25);
-    --hover-bg:rgba(255,255,255,0.04); --active-bg:rgba(212,230,0,0.1);
-    --text-primary:#F0EDE4; --text-secondary:#C8C4B8; --text-muted:#5A6080;
-    --yellow:#D4E600; --yellow-bright:#E8F400; --yellow-dim:rgba(212,230,0,0.15);
+    --border:rgba(255,255,255,0.08); --border-accent:rgba(247,246,221,0.25);
+    --hover-bg:rgba(255,255,255,0.04); --active-bg:rgba(247,246,221,0.1);
+    --text-primary:#f7f6dd; --text-secondary:#C8C4B8; --text-muted:#5A6080;
+    --yellow:#f7f6dd; --yellow-bright:#f7f6dd; --yellow-dim:rgba(247,246,221,0.15);
     --blue-mid:#2B4BA0; --blue-sky:#4A90D9; --green-field:#5A8A3C;
-    --white-soft:#F0EDE4; --gold:#D4E600;
+    --white-soft:#f7f6dd; --gold:#f7f6dd;
     --font-display:'Barlow Condensed','Impact',sans-serif;
     --font-script:'Playfair Display','Georgia',serif;
     --font-body:'Barlow',system-ui,sans-serif;
   }
   html,body,#root { height:100%; min-height:100vh; }
   body { background:var(--bg-primary); color:var(--text-primary); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
-  ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:rgba(212,230,0,0.15);border-radius:3px;}
+  ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:rgba(247,246,221,0.15);border-radius:3px;}
   .app-layout { display:flex; min-height:100vh; }
   .app-main { flex:1; margin-left:220px; min-height:100vh; overflow-y:auto; }
   @media(max-width:768px){ .app-main{ margin-left:0; padding-bottom:80px; } .sidebar{ display:none!important; } .mobile-nav{ display:flex!important; } }
-  input:focus,textarea:focus{ border-color:rgba(212,230,0,0.4)!important; box-shadow:0 0 0 3px rgba(212,230,0,0.08); }
+  input:focus,textarea:focus{ border-color:rgba(247,246,221,0.4)!important; box-shadow:0 0 0 3px rgba(247,246,221,0.08); }
 `;
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (

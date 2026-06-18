@@ -18,10 +18,10 @@ const GLOBAL_CSS = `
     --card-bg:#111D3E; --card-alt:#0F1A36; --input-bg:#162040;
     --border:rgba(255,255,255,0.08); --border-accent:rgba(247,246,221,0.25);
     --hover-bg:rgba(255,255,255,0.04); --active-bg:rgba(247,246,221,0.1);
-    --text-primary:#F0EDE4; --text-secondary:#C8C4B8; --text-muted:#5A6080;
+    --text-primary:#f7f6dd; --text-secondary:#C8C4B8; --text-muted:#5A6080;
     --yellow:#f7f6dd; --yellow-bright:#E8F400; --yellow-dim:rgba(247,246,221,0.15);
     --blue-mid:#2B4BA0; --blue-sky:#4A90D9; --green-field:#5A8A3C;
-    --white-soft:#F0EDE4; --gold:#f7f6dd;
+    --white-soft:#f7f6dd; --gold:#f7f6dd;
     --font-display:'Barlow Condensed','Impact',sans-serif;
     --font-script:'Playfair Display','Georgia',serif;
     --font-body:'Barlow',system-ui,sans-serif;

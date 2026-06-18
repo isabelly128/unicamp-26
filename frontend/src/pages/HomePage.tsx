@@ -63,9 +63,9 @@ export const HomePage: React.FC = () => {
             <div style={{ position:'absolute', top:'24px', right:'24px', display:'flex', gap:'8px', alignItems:'center', zIndex:2 }}>
               {showBgUpload ? (
                 <>
-                  <input value={bgInput} onChange={(e) => setBgInput(e.target.value)} placeholder="Paste image URL…" style={{ padding:'7px 12px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.3)', background:'rgba(10,17,40,0.9)', color:'#F0EDE4', fontSize:'12px', fontFamily:"'Barlow',sans-serif", outline:'none', width:'200px' }}/>
+                  <input value={bgInput} onChange={(e) => setBgInput(e.target.value)} placeholder="Paste image URL…" style={{ padding:'7px 12px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.3)', background:'rgba(10,17,40,0.9)', color:'#f7f6dd', fontSize:'12px', fontFamily:"'Barlow',sans-serif", outline:'none', width:'200px' }}/>
                   <button onClick={saveBg} style={{ padding:'7px 14px', borderRadius:'4px', border:'none', background:'#f7f6dd', color:'#0A1128', fontSize:'11px', fontWeight:800, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>Save</button>
-                  <button onClick={() => setShowBgUpload(false)} style={{ padding:'7px 10px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'rgba(240,237,228,0.5)', fontSize:'11px', cursor:'pointer' }}>✕</button>
+                  <button onClick={() => setShowBgUpload(false)} style={{ padding:'7px 10px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'rgba(247,246,221,0.5)', fontSize:'11px', cursor:'pointer' }}>✕</button>
                   {heroBgUrl && <button onClick={() => { setHeroBgUrl(''); setShowBgUpload(false); }} style={{ padding:'7px 10px', borderRadius:'4px', border:'1px solid rgba(220,80,80,0.3)', background:'transparent', color:'rgba(220,80,80,0.6)', fontSize:'11px', cursor:'pointer' }}>Remove</button>}
                 </>
               ) : (
@@ -81,10 +81,10 @@ export const HomePage: React.FC = () => {
           {/* Headline */}
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ display:'flex', alignItems:'baseline', gap:'14px', flexWrap:'wrap', marginBottom:'4px' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em' }}>STAY THE</span>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>STAY THE</span>
               <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>Course.</span>
             </div>
-            <p style={{ fontSize:'12px', color:'rgba(240,237,228,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'Barlow',sans-serif" }}>
+            <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'Barlow',sans-serif" }}>
               {VERSE_FULL} — {VERSE_REF}
             </p>
             <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
@@ -96,7 +96,7 @@ export const HomePage: React.FC = () => {
 
         {/* Welcome */}
         <div style={{ marginBottom:'24px' }}>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#F0EDE4' }}>WELCOME BACK, </span>
+          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#f7f6dd' }}>WELCOME BACK, </span>
           <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'24px', color:'#f7f6dd' }}>{firstName}.</span>
         </div>
 
@@ -110,8 +110,8 @@ export const HomePage: React.FC = () => {
               <div style={{ position:'absolute', top:'14px', right:'14px', fontSize:'20px', opacity:0.55 }}>{card.icon}</div>
               <div>
                 {card.label && <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'10px', letterSpacing:'0.12em', textTransform:'uppercase', color:card.accent, marginBottom:'2px' }}>{card.label}</div>}
-                <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'20px', color:'#F0EDE4', lineHeight:1.1, marginBottom:'6px' }}>{card.labelScript}</div>
-                <div style={{ fontSize:'11px', color:'rgba(240,237,228,0.3)', fontFamily:"'Barlow',sans-serif" }}>{card.desc}</div>
+                <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'20px', color:'#f7f6dd', lineHeight:1.1, marginBottom:'6px' }}>{card.labelScript}</div>
+                <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif" }}>{card.desc}</div>
               </div>
             </Link>
           ))}

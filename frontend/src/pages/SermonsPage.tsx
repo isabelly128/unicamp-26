@@ -90,8 +90,8 @@ export const SermonsPage: React.FC = () => {
         <div className="ser-header">
           <div>
             <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Sermon</div>
-            <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#F0EDE4', margin:'0 0 6px', lineHeight:1 }}>Notes</h1>
-            <p style={{ color:'rgba(240,237,228,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>
+            <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Notes</h1>
+            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>
               Session notes &amp; reflection questions — updated after each session
             </p>
           </div>
@@ -109,7 +109,7 @@ export const SermonsPage: React.FC = () => {
         {/* Add form */}
         {showAdd && canEdit && (
           <div style={{ background:'#111D3E', border:'1px solid rgba(247,246,221,0.2)', borderRadius:'8px', padding:'20px', marginBottom:'24px' }}>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.08em', textTransform:'uppercase', color:'#F0EDE4', marginBottom:'14px' }}>Add Sermon Notes</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.08em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>Add Sermon Notes</div>
             <div className="ser-upload-grid">
               <input placeholder="Session Title" value={addTitle}  onChange={(e) => setAddTitle(e.target.value)}  style={inp}/>
               <input placeholder="PDF URL"       value={addPdfUrl} onChange={(e) => setAddPdfUrl(e.target.value)} style={inp}/>
@@ -132,7 +132,7 @@ export const SermonsPage: React.FC = () => {
               <input placeholder="PDF URL"       value={editPdfUrl} onChange={(e) => setEditPdfUrl(e.target.value)} style={inp}/>
               <input type="number" placeholder="Day #" value={editDay} min={1} max={4} onChange={(e) => setEditDay(parseInt(e.target.value, 10))} style={inp}/>
             </div>
-            <div style={{ fontSize:'11px', color:'rgba(240,237,228,0.3)', fontFamily:"'Barlow',sans-serif", marginBottom:'8px' }}>
+            <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif", marginBottom:'8px' }}>
               For Google Drive PDFs: Share → Anyone with link → copy URL
             </div>
             <textarea placeholder="Reflection questions — one per line" value={editQuestions} onChange={(e) => setEditQuestions(e.target.value)} rows={4} style={{ ...inp, resize:'vertical', fontFamily:"'Barlow',sans-serif", marginBottom:'12px' }}/>
@@ -148,26 +148,26 @@ export const SermonsPage: React.FC = () => {
           <div className="ser-grid-split">
             {/* Detail panel */}
             <div className="ser-detail" style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', overflow:'hidden', display:'flex', flexDirection:'column' }}>
-              <button onClick={() => setSelected(null)} style={{ display:'none', width:'100%', padding:'12px 16px', background:'rgba(255,255,255,0.04)', border:'none', borderBottom:'1px solid rgba(255,255,255,0.06)', color:'rgba(240,237,228,0.5)', fontSize:'12px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase', cursor:'pointer', textAlign:'left' }} className="ser-back">← Back</button>
+              <button onClick={() => setSelected(null)} style={{ display:'none', width:'100%', padding:'12px 16px', background:'rgba(255,255,255,0.04)', border:'none', borderBottom:'1px solid rgba(255,255,255,0.06)', color:'rgba(247,246,221,0.5)', fontSize:'12px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase', cursor:'pointer', textAlign:'left' }} className="ser-back">← Back</button>
 
               {selected.pdfUrl ? (
                 <iframe src={selected.pdfUrl} title={selected.sessionTitle} style={{ width:'100%', height:'320px', border:'none', background:'#000' }}/>
               ) : (
                 <div style={{ height:'120px', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:'8px' }}>
                   <div style={{ fontSize:'28px' }}>📄</div>
-                  <div style={{ fontSize:'12px', color:'rgba(240,237,228,0.25)', fontFamily:"'Barlow',sans-serif" }}>No PDF uploaded yet</div>
+                  <div style={{ fontSize:'12px', color:'rgba(247,246,221,0.25)', fontFamily:"'Barlow',sans-serif" }}>No PDF uploaded yet</div>
                 </div>
               )}
 
               <div style={{ padding:'20px' }}>
                 <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'12px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>Reflection Questions</div>
                 {selected.reflectionQuestions.length === 0 && (
-                  <p style={{ color:'rgba(240,237,228,0.3)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No questions added yet.</p>
+                  <p style={{ color:'rgba(247,246,221,0.3)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No questions added yet.</p>
                 )}
                 {selected.reflectionQuestions.map((q: string, i: number) => (
                   <div key={i} style={{ display:'flex', gap:'12px', marginBottom:'10px', padding:'14px', background:'rgba(247,246,221,0.04)', borderRadius:'6px', border:'1px solid rgba(247,246,221,0.1)' }}>
                     <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'14px', color:'#f7f6dd', minWidth:'20px' }}>{i + 1}.</span>
-                    <span style={{ fontSize:'14px', color:'rgba(240,237,228,0.7)', lineHeight:1.6, fontFamily:"'Barlow',sans-serif" }}>{q}</span>
+                    <span style={{ fontSize:'14px', color:'rgba(247,246,221,0.7)', lineHeight:1.6, fontFamily:"'Barlow',sans-serif" }}>{q}</span>
                   </div>
                 ))}
               </div>
@@ -182,8 +182,8 @@ export const SermonsPage: React.FC = () => {
                   <div key={note.id} style={{ display:'flex', gap:'8px', alignItems:'stretch' }}>
                     <button onClick={() => openNote(note)} style={{ flex:1, textAlign:'left', padding:'14px 16px', borderRadius:'6px', border:`1px solid ${active ? '#f7f6dd' : isBeingEdited ? 'rgba(247,246,221,0.4)' : 'rgba(255,255,255,0.07)'}`, background: active ? 'rgba(247,246,221,0.08)' : '#111D3E', cursor:'pointer', transition:'all 0.12s', borderLeft:`3px solid ${active ? '#f7f6dd' : 'transparent'}` }}>
                       <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'11px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Day {note.day}</div>
-                      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'15px', color: active ? '#F0EDE4' : 'rgba(240,237,228,0.7)', marginBottom:'4px' }}>{note.sessionTitle}</div>
-                      <div style={{ fontSize:'11px', color:'rgba(240,237,228,0.25)', fontFamily:"'Barlow',sans-serif", display:'flex', gap:'8px' }}>
+                      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'15px', color: active ? '#f7f6dd' : 'rgba(247,246,221,0.7)', marginBottom:'4px' }}>{note.sessionTitle}</div>
+                      <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"'Barlow',sans-serif", display:'flex', gap:'8px' }}>
                         <span>{note.reflectionQuestions.length} questions</span>
                         {note.pdfUrl && <span style={{ color:'rgba(247,246,221,0.4)' }}>· PDF ✓</span>}
                       </div>
@@ -202,7 +202,7 @@ export const SermonsPage: React.FC = () => {
         ) : (
           <div className="ser-grid-list">
             {sermonNotes.length === 0 && (
-              <p style={{ color:'rgba(240,237,228,0.3)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No sermon notes uploaded yet.</p>
+              <p style={{ color:'rgba(247,246,221,0.3)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No sermon notes uploaded yet.</p>
             )}
             {sermonNotes.map((note: SermonNote) => {
               const isBeingEdited = editingId === note.id;
@@ -213,8 +213,8 @@ export const SermonsPage: React.FC = () => {
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = isBeingEdited ? 'rgba(247,246,221,0.4)' : 'rgba(255,255,255,0.07)'; }}
                   >
                     <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.12em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'6px' }}>Day {note.day}</div>
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'18px', color:'#F0EDE4', marginBottom:'8px', lineHeight:1.2 }}>{note.sessionTitle}</div>
-                    <div style={{ fontSize:'12px', color:'rgba(240,237,228,0.3)', fontFamily:"'Barlow',sans-serif", display:'flex', gap:'8px' }}>
+                    <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'18px', color:'#f7f6dd', marginBottom:'8px', lineHeight:1.2 }}>{note.sessionTitle}</div>
+                    <div style={{ fontSize:'12px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif", display:'flex', gap:'8px' }}>
                       <span>{note.reflectionQuestions.length} reflection questions →</span>
                       {note.pdfUrl && <span style={{ color:'rgba(247,246,221,0.4)' }}>PDF ✓</span>}
                     </div>
@@ -238,8 +238,8 @@ export const SermonsPage: React.FC = () => {
           <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:1000 }} onClick={() => setConfirmDelete(null)}/>
           <div style={{ position:'fixed', top:'50%', left:'50%', transform:'translate(-50%,-50%)', background:'#111D3E', border:'1px solid rgba(220,80,80,0.3)', borderRadius:'10px', padding:'28px 32px', zIndex:1001, maxWidth:'380px', width:'90%' }}>
             <div style={{ fontSize:'28px', marginBottom:'12px' }}>⚠️</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'16px', textTransform:'uppercase', color:'#F0EDE4', marginBottom:'10px' }}>Confirm Delete</div>
-            <p style={{ fontSize:'14px', color:'rgba(240,237,228,0.6)', fontFamily:"'Barlow',sans-serif", lineHeight:1.6, marginBottom:'24px' }}>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'16px', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'10px' }}>Confirm Delete</div>
+            <p style={{ fontSize:'14px', color:'rgba(247,246,221,0.6)', fontFamily:"'Barlow',sans-serif", lineHeight:1.6, marginBottom:'24px' }}>
               Delete "{confirmDelete.sessionTitle}"? This cannot be undone.
             </p>
             <div style={{ display:'flex', gap:'10px', justifyContent:'flex-end' }}>
@@ -257,7 +257,7 @@ const inp: React.CSSProperties = {
   padding:'11px 13px', borderRadius:'4px',
   border:'1px solid rgba(255,255,255,0.08)',
   background:'rgba(255,255,255,0.04)',
-  color:'#F0EDE4', fontSize:'13px', outline:'none',
+  color:'#f7f6dd', fontSize:'13px', outline:'none',
   width:'100%', boxSizing:'border-box',
 };
 const primaryBtn: React.CSSProperties = {
@@ -267,6 +267,6 @@ const primaryBtn: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   padding:'9px 14px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)',
-  background:'transparent', color:'rgba(240,237,228,0.5)', fontSize:'11px', fontWeight:700, cursor:'pointer',
+  background:'transparent', color:'rgba(247,246,221,0.5)', fontSize:'11px', fontWeight:700, cursor:'pointer',
   fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase',
 };

@@ -27,14 +27,14 @@ export const LoginPage: FC = () => {
   const inputStyle: CSSProperties = {
     width: '100%', padding: '14px 16px', borderRadius: '4px',
     border: '1px solid rgba(255,255,255,0.12)',
-    background: 'rgba(255,255,255,0.05)', color: '#F0EDE4',
+    background: 'rgba(255,255,255,0.05)', color: '#f7f6dd',
     fontSize: '15px', fontFamily: "'Barlow',sans-serif",
     outline: 'none', boxSizing: 'border-box', letterSpacing: '0.02em',
   };
   const labelStyle: CSSProperties = {
     display: 'block', fontSize: '11px', fontWeight: 600,
     letterSpacing: '0.12em', textTransform: 'uppercase',
-    color: 'rgba(240,237,228,0.5)', marginBottom: '8px',
+    color: 'rgba(247,246,221,0.5)', marginBottom: '8px',
     fontFamily: "'Barlow Condensed',sans-serif",
   };
 
@@ -60,9 +60,9 @@ export const LoginPage: FC = () => {
             UNICAMP 2026 — Staff Portal
           </div>
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', letterSpacing:'-0.02em', marginBottom:'8px' }}>STAY THE</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em', marginBottom:'8px' }}>STAY THE</div>
             <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#f7f6dd', marginBottom:'8px' }}>Course.</div>
-            <p style={{ fontFamily:"'Barlow',sans-serif", fontSize:'13px', color:'rgba(240,237,228,0.4)', fontStyle:'italic', lineHeight:1.8, maxWidth:'360px', marginTop:'20px' }}>
+            <p style={{ fontFamily:"'Barlow',sans-serif", fontSize:'13px', color:'rgba(247,246,221,0.4)', fontStyle:'italic', lineHeight:1.8, maxWidth:'360px', marginTop:'20px' }}>
               {VERSE}
             </p>
             <div style={{ marginTop:'32px' }}>
@@ -79,7 +79,7 @@ export const LoginPage: FC = () => {
           {/* Mobile-only mini header */}
           <div style={{ display:'none', marginBottom:'32px' }} className="login-mobile-header">
             <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(247,246,221,0.5)', marginBottom:'12px' }}>UNICAMP 2026</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'40px', lineHeight:0.9, textTransform:'uppercase', color:'#F0EDE4', marginBottom:'4px' }}>STAY THE</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'40px', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>STAY THE</div>
             <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'32px', lineHeight:1, color:'#f7f6dd', marginBottom:'20px' }}>Course.</div>
             <a href="/" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.2)', color:'rgba(247,246,221,0.5)', textDecoration:'none', fontSize:'10px', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif" }}>
               ← Member Site
@@ -89,8 +89,8 @@ export const LoginPage: FC = () => {
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'12px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'16px' }}>
             Staff Access Only
           </div>
-          <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'38px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#F0EDE4', marginBottom:'6px', lineHeight:1 }}>Sign In</h2>
-          <p style={{ fontSize:'13px', color:'rgba(240,237,228,0.35)', marginBottom:'32px', fontFamily:"'Barlow',sans-serif" }}>
+          <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'38px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#f7f6dd', marginBottom:'6px', lineHeight:1 }}>Sign In</h2>
+          <p style={{ fontSize:'13px', color:'rgba(247,246,221,0.35)', marginBottom:'32px', fontFamily:"'Barlow',sans-serif" }}>
             For comms, pastoral &amp; admin team
           </p>
 
@@ -108,12 +108,12 @@ export const LoginPage: FC = () => {
               <div style={{ background:'rgba(220,80,80,0.08)', border:'1px solid rgba(220,80,80,0.25)', borderRadius:'4px', padding:'10px 14px', marginBottom:'16px', fontSize:'13px', color:'#e07070', fontFamily:"'Barlow',sans-serif" }}>{error}</div>
             )}
 
-            <button type="submit" disabled={loading} style={{ width:'100%', padding:'16px', borderRadius:'4px', border:'none', background: loading ? 'rgba(255,255,255,0.08)' : '#f7f6dd', color: loading ? 'rgba(240,237,228,0.3)' : '#0A1128', fontSize:'13px', fontWeight:800, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.15em', textTransform:'uppercase', cursor: loading ? 'not-allowed' : 'pointer', transition:'background 0.15s' }}>
+            <button type="submit" disabled={loading} style={{ width:'100%', padding:'16px', borderRadius:'4px', border:'none', background: loading ? 'rgba(255,255,255,0.08)' : '#f7f6dd', color: loading ? 'rgba(247,246,221,0.3)' : '#0A1128', fontSize:'13px', fontWeight:800, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.15em', textTransform:'uppercase', cursor: loading ? 'not-allowed' : 'pointer', transition:'background 0.15s' }}>
               {loading ? 'Signing in…' : 'Enter Staff Portal →'}
             </button>
           </form>
 
-          <p style={{ marginTop:'20px', fontSize:'11px', color:'rgba(240,237,228,0.2)', fontFamily:"'Barlow',sans-serif", lineHeight:1.6 }}>
+          <p style={{ marginTop:'20px', fontSize:'11px', color:'rgba(247,246,221,0.2)', fontFamily:"'Barlow',sans-serif", lineHeight:1.6 }}>
             Don't have credentials? Contact your camp administrator.
           </p>
         </div>

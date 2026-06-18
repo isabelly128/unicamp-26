@@ -38,7 +38,7 @@ export const PrayerPage: React.FC = () => {
           position: 'fixed', top: '32px', left: '50%', transform: 'translateX(-50%)',
           zIndex: 9999,
           background: '#111D3E',
-          border: '1px solid rgba(212,230,0,0.35)',
+          border: '1px solid rgba(247,246,221,0.35)',
           borderRadius: '8px',
           padding: '16px 28px',
           display: 'flex', alignItems: 'center', gap: '12px',
@@ -47,10 +47,10 @@ export const PrayerPage: React.FC = () => {
         }}>
           <span style={{ fontSize: '20px' }}>🙏</span>
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'14px', letterSpacing:'0.05em', textTransform:'uppercase', color:'#D4E600' }}>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'14px', letterSpacing:'0.05em', textTransform:'uppercase', color:'#f7f6dd' }}>
               Request Sent
             </div>
-            <div style={{ fontFamily:"'Barlow',sans-serif", fontSize:'12px', color:'rgba(240,237,228,0.5)', marginTop:'2px' }}>
+            <div style={{ fontFamily:"'Barlow',sans-serif", fontSize:'12px', color:'rgba(247,246,221,0.5)', marginTop:'2px' }}>
               Our prayer team has been notified. God hears you.
             </div>
           </div>
@@ -66,13 +66,13 @@ export const PrayerPage: React.FC = () => {
 
       {/* Header */}
       <div style={{ marginBottom: '32px' }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#D4E600', marginBottom:'6px' }}>
+        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'6px' }}>
           Prayer
         </div>
-        <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'40px', color:'#F0EDE4', margin:'0 0 8px', lineHeight:1 }}>
+        <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'40px', color:'#f7f6dd', margin:'0 0 8px', lineHeight:1 }}>
           Wall
         </h1>
-        <p style={{ color:'rgba(240,237,228,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>
+        <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>
           Submit your prayer requests. Our prayer ministers will be notified.
         </p>
         {isPastoral && (
@@ -84,7 +84,7 @@ export const PrayerPage: React.FC = () => {
 
       {/* Submit form */}
       <div style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'24px', marginBottom:'32px' }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#F0EDE4', marginBottom:'14px' }}>
+        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>
           Submit a Prayer Request
         </div>
 
@@ -96,7 +96,7 @@ export const PrayerPage: React.FC = () => {
           style={{
             width:'100%', padding:'12px 16px', borderRadius:'4px',
             border:'1px solid rgba(255,255,255,0.08)',
-            background:'rgba(255,255,255,0.04)', color:'#F0EDE4',
+            background:'rgba(255,255,255,0.04)', color:'#f7f6dd',
             fontSize:'14px', outline:'none', resize:'vertical',
             fontFamily:"'Barlow',sans-serif", lineHeight:1.7,
             boxSizing:'border-box', marginBottom:'14px',
@@ -104,12 +104,12 @@ export const PrayerPage: React.FC = () => {
         />
 
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <label style={{ display:'flex', alignItems:'center', gap:'8px', fontSize:'13px', color:'rgba(240,237,228,0.4)', cursor:'pointer', fontFamily:"'Barlow',sans-serif" }}>
+          <label style={{ display:'flex', alignItems:'center', gap:'8px', fontSize:'13px', color:'rgba(247,246,221,0.4)', cursor:'pointer', fontFamily:"'Barlow',sans-serif" }}>
             <input
               type="checkbox"
               checked={isAnonymous}
               onChange={(e) => setIsAnonymous(e.target.checked)}
-              style={{ accentColor:'#D4E600' }}
+              style={{ accentColor:'#f7f6dd' }}
             />
             Submit anonymously
           </label>
@@ -119,8 +119,8 @@ export const PrayerPage: React.FC = () => {
             disabled={!content.trim()}
             style={{
               padding:'11px 24px', borderRadius:'4px', border:'none',
-              background: content.trim() ? '#D4E600' : 'rgba(255,255,255,0.06)',
-              color: content.trim() ? '#0A1128' : 'rgba(240,237,228,0.2)',
+              background: content.trim() ? '#f7f6dd' : 'rgba(255,255,255,0.06)',
+              color: content.trim() ? '#0A1128' : 'rgba(247,246,221,0.2)',
               fontSize:'12px', fontWeight:800, cursor: content.trim() ? 'pointer' : 'not-allowed',
               fontFamily:"'Barlow Condensed',sans-serif",
               letterSpacing:'0.12em', textTransform:'uppercase',
@@ -135,11 +135,11 @@ export const PrayerPage: React.FC = () => {
       {/* Pastoral: full list */}
       {isPastoral && (
         <div>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(240,237,228,0.5)', marginBottom:'16px' }}>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(247,246,221,0.5)', marginBottom:'16px' }}>
             All Prayer Requests ({prayerRequests.length})
           </div>
           {visibleRequests.length === 0 && (
-            <p style={{ color:'rgba(240,237,228,0.3)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No requests yet.</p>
+            <p style={{ color:'rgba(247,246,221,0.3)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No requests yet.</p>
           )}
           {visibleRequests.map((req: PrayerRequest) => (
             <div key={req.id} style={{
@@ -148,11 +148,11 @@ export const PrayerPage: React.FC = () => {
               opacity: req.status === 'prayed' ? 0.5 : 1,
               borderLeft: req.status === 'prayed' ? '3px solid rgba(139,195,74,0.4)' : '3px solid rgba(255,255,255,0.08)',
             }}>
-              <p style={{ margin:'0 0 12px', fontSize:'14px', color:'#F0EDE4', lineHeight:1.7, fontFamily:"'Barlow',sans-serif" }}>
+              <p style={{ margin:'0 0 12px', fontSize:'14px', color:'#f7f6dd', lineHeight:1.7, fontFamily:"'Barlow',sans-serif" }}>
                 {req.content}
               </p>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                <div style={{ fontSize:'11px', color:'rgba(240,237,228,0.25)', fontFamily:"'Barlow',sans-serif" }}>
+                <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"'Barlow',sans-serif" }}>
                   {req.isAnonymous ? 'Anonymous' : req.submittedBy}
                   {' · '}
                   {new Date(req.submittedAt).toLocaleDateString()}
@@ -177,8 +177,8 @@ export const PrayerPage: React.FC = () => {
 
       {/* Member reassurance */}
       {!isPastoral && (
-        <div style={{ padding:'24px', background:'rgba(212,230,0,0.04)', border:'1px solid rgba(212,230,0,0.1)', borderRadius:'8px' }}>
-          <p style={{ fontSize:'13px', color:'rgba(240,237,228,0.4)', fontStyle:'italic', lineHeight:1.8, margin:0, fontFamily:"'Barlow',sans-serif" }}>
+        <div style={{ padding:'24px', background:'rgba(247,246,221,0.04)', border:'1px solid rgba(247,246,221,0.1)', borderRadius:'8px' }}>
+          <p style={{ fontSize:'13px', color:'rgba(247,246,221,0.4)', fontStyle:'italic', lineHeight:1.8, margin:0, fontFamily:"'Barlow',sans-serif" }}>
             Your request has been sent to our prayer team. They will be praying for you.
             Rest in the knowledge that God hears every prayer. 🙏
           </p>
