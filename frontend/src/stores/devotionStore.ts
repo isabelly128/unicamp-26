@@ -59,7 +59,7 @@ export interface SermonNote {
 const DEFAULT_SCHEDULE: CampDay[] = [
   {
     day: 1, label: 'Day 1', date: 'Saturday, June 1',
-    theme: 'Encountering God', verse: 'Isaiah 6:1-8',
+    theme: 'Encountering God', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '2:00 PM',  title: 'Registration & Check-In',      icon: '🏕️', type: 'activity' },
       { time: '3:30 PM',  title: 'Camp Orientation',             description: 'Ground rules, safety briefing, room assignments', icon: '📋', type: 'activity' },
@@ -74,7 +74,7 @@ const DEFAULT_SCHEDULE: CampDay[] = [
   },
   {
     day: 2, label: 'Day 2', date: 'Sunday, June 2',
-    theme: 'Walking in Faith', verse: 'Hebrews 11:1, 6',
+    theme: 'Walking in Faith', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '7:00 AM',  title: 'Morning Devotion',              icon: '🌅', type: 'devotion' },
       { time: '7:45 AM',  title: 'Breakfast',                     icon: '🍳', type: 'meal' },
@@ -93,7 +93,7 @@ const DEFAULT_SCHEDULE: CampDay[] = [
   },
   {
     day: 3, label: 'Day 3', date: 'Monday, June 3',
-    theme: 'Community & Calling', verse: '1 Corinthians 12:12-27',
+    theme: 'Community & Calling', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '7:00 AM',  title: 'Morning Devotion',                  icon: '🌅', type: 'devotion' },
       { time: '7:45 AM',  title: 'Breakfast',                         icon: '🍳', type: 'meal' },
@@ -111,7 +111,7 @@ const DEFAULT_SCHEDULE: CampDay[] = [
   },
   {
     day: 4, label: 'Day 4', date: 'Tuesday, June 4',
-    theme: 'Sent & Commissioned', verse: 'Matthew 28:18-20',
+    theme: 'Sent & Commissioned', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '7:00 AM',  title: 'Morning Devotion',                   icon: '🌅', type: 'devotion' },
       { time: '7:45 AM',  title: 'Breakfast',                          icon: '🍳', type: 'meal' },

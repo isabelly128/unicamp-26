@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 
 const THEME       = 'Stay the Course';
-const CAMP_DATES  = 'June 1–4, 2026';
+const CAMP_DATES  = 'July 2–5, 2026';
 const VERSE_REF   = 'Matthew 7:13-14';
 const VERSE_FULL  = '13 "Enter through the narrow gate. For wide is the gate and broad is the road that leads to destruction, and many enter through it. 14 But small is the gate and narrow the road that leads to life, and only a few find it."';
 
@@ -81,15 +81,15 @@ export const HomePage: React.FC = () => {
           {/* Headline */}
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ display:'flex', alignItems:'baseline', gap:'14px', flexWrap:'wrap', marginBottom:'4px' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>STAY THE</span>
-              <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>Course.</span>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>STAY The</span>
+              <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>COURSE.</span>
             </div>
             <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'Barlow',sans-serif" }}>
               {VERSE_FULL} — {VERSE_REF}
             </p>
             <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
               <a href="https://open.spotify.com/playlist/your-playlist-id" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#1DB954', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>🎵 Camp Playlist</a>
-              <a href="https://t.me/your-group-link" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#0088cc', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>💬 Telegram</a>
+              <a href="https://t.me/+byIFKl5mFR43ZjI1" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#0088cc', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>💬 Telegram</a>
             </div>
           </div>
         </div>
