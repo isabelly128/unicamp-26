@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 import type { PhotoAlbum } from '../stores/communityStore';
@@ -8,45 +8,52 @@ const CSS = `
   .photos-page { padding: 24px; max-width: 960px; }
   .photos-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; gap: 12px; flex-wrap: wrap; }
   .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
+  .album-card { position: relative; background: #111D3E; border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; overflow: hidden; }
+  .album-cover-btn { opacity: 0; transition: opacity 0.15s; }
+  .album-card:hover .album-cover-btn { opacity: 1; }
   @media (max-width: 640px) {
     .photos-page { padding: 16px 14px; }
     .photos-grid { grid-template-columns: 1fr; }
+    .album-cover-btn { opacity: 1 !important; }
   }
 `;
 
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export const PhotosPage: React.FC = () => {
-  const { hasRole }                                                                    = useAuthStore();
-  const { photoAlbums, photosPublic, setPhotosPublic, addPhotoAlbum, removePhotoAlbum } = useCommunityStore();
+  const { hasRole }                                                                              = useAuthStore();
+  const { photoAlbums, photosPublic, setPhotosPublic, addPhotoAlbum,
+          removePhotoAlbum, updatePhotoAlbumCover }                                             = useCommunityStore();
 
   const canManage = hasRole(['administrator', 'comms']);
   const canView   = canManage || photosPublic;
 
-  const [showAdd,   setShowAdd]   = useState(false);
-  const [newTitle,  setNewTitle]  = useState('');
-  const [newUrl,    setNewUrl]    = useState('');
-  const [newCover,  setNewCover]  = useState('');
+  const [showAdd,  setShowAdd]  = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newUrl,   setNewUrl]   = useState('');
 
-  // Per-album cover editing
-  const [editingCoverId, setEditingCoverId] = useState<string | null>(null);
-  const [coverDraft,     setCoverDraft]     = useState('');
+  // Per-album cover file refs
+  const coverRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // useCommunityStore update cover
-  const { photoAlbums: albums } = useCommunityStore();
-  // We update cover by removing and re-adding — or better, use a local override map
-  const [coverOverrides, setCoverOverrides] = useState<Record<string, string>>({});
-
-  const saveCover = (albumId: string): void => {
-    setCoverOverrides((prev) => ({ ...prev, [albumId]: coverDraft }));
-    setEditingCoverId(null);
+  const handleCoverFile = async (albumId: string, e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const dataUrl = await fileToDataUrl(file);
+    updatePhotoAlbumCover(albumId, dataUrl);
+    e.target.value = '';
   };
-
-  const getCover = (album: PhotoAlbum): string =>
-    coverOverrides[album.id] ?? album.coverPhotoUrl;
 
   const handleAdd = (): void => {
     if (!newTitle || !newUrl) return;
-    addPhotoAlbum({ title: newTitle, googlePhotosUrl: newUrl, coverPhotoUrl: newCover, updatedAt: new Date().toISOString() });
-    setNewTitle(''); setNewUrl(''); setNewCover(''); setShowAdd(false);
+    addPhotoAlbum({ title: newTitle, googlePhotosUrl: newUrl, coverPhotoUrl: '', updatedAt: new Date().toISOString() });
+    setNewTitle(''); setNewUrl(''); setShowAdd(false);
   };
 
   return (
@@ -87,7 +94,9 @@ export const PhotosPage: React.FC = () => {
             <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'12px' }}>
               <input placeholder="Album title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} style={inp}/>
               <input placeholder="Google Drive / Photos URL" value={newUrl} onChange={(e) => setNewUrl(e.target.value)} style={inp}/>
-              <input placeholder="Cover image URL (optional)" value={newCover} onChange={(e) => setNewCover(e.target.value)} style={inp}/>
+              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif" }}>
+                Cover photo: upload after adding the album using the 🖼 button on the card.
+              </div>
             </div>
             <div style={{ display:'flex', gap:'8px' }}>
               <button onClick={handleAdd} style={primaryBtn}>Add Album</button>
@@ -96,7 +105,7 @@ export const PhotosPage: React.FC = () => {
           </div>
         )}
 
-        {/* Locked state for members */}
+        {/* Locked state */}
         {!canView && (
           <div style={{ textAlign:'center', padding:'64px 24px', background:'#111D3E', borderRadius:'8px', border:'1px solid rgba(255,255,255,0.06)' }}>
             <div style={{ fontSize:'48px', marginBottom:'16px' }}>📸</div>
@@ -112,49 +121,56 @@ export const PhotosPage: React.FC = () => {
           <>
             {canManage && (
               <div style={{ padding:'12px 16px', borderRadius:'6px', marginBottom:'20px', background: photosPublic ? 'rgba(90,138,60,0.08)' : 'rgba(247,246,221,0.06)', border: `1px solid ${photosPublic ? 'rgba(90,138,60,0.2)' : 'rgba(247,246,221,0.15)'}`, fontSize:'12px', fontFamily:"'Barlow',sans-serif", color: photosPublic ? '#8BC34A' : 'rgba(247,246,221,0.6)' }}>
-                {photosPublic
-                  ? '✓ Photos are visible to all members.'
-                  : '⚠ Photos are currently hidden from members. Click "Hidden from Members" above to reveal them.'}
+                {photosPublic ? '✓ Photos are visible to all members.' : '⚠ Photos are hidden from members. Toggle above to reveal them.'}
               </div>
             )}
 
             <div className="photos-grid">
               {photoAlbums.map((album: PhotoAlbum) => (
-                <div key={album.id} style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', overflow:'hidden', position:'relative' }}>
+                <div key={album.id} className="album-card">
 
-                  {/* Cover image */}
-                  {getCover(album) ? (
-                    <img src={getCover(album)} alt={album.title} style={{ width:'100%', height:'180px', objectFit:'cover', display:'block' }}/>
-                  ) : (
-                    <div style={{ width:'100%', height:'180px', background:'linear-gradient(135deg,#0D1B4A,#0A1128)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                      <span style={{ fontSize:'40px', opacity:0.3 }}>📷</span>
-                    </div>
-                  )}
-
-                  {/* Edit cover button (admin only) */}
+                  {/* Hidden file input per album */}
                   {canManage && (
-                    <div style={{ position:'absolute', top:'8px', right:'8px' }}>
-                      {editingCoverId === album.id ? (
-                        <div style={{ background:'rgba(10,17,40,0.95)', borderRadius:'6px', padding:'10px', display:'flex', flexDirection:'column', gap:'6px', minWidth:'200px', border:'1px solid rgba(247,246,221,0.2)' }}>
-                          <input
-                            value={coverDraft}
-                            onChange={(e) => setCoverDraft(e.target.value)}
-                            placeholder="Paste cover image URL..."
-                            style={{ ...inp, fontSize:'11px', padding:'7px 10px' }}
-                            autoFocus
-                          />
-                          <div style={{ display:'flex', gap:'6px' }}>
-                            <button onClick={() => saveCover(album.id)} style={{ ...primaryBtn, padding:'6px 12px', fontSize:'10px', flex:1 }}>Save</button>
-                            <button onClick={() => setEditingCoverId(null)} style={{ ...ghostBtn, padding:'6px 10px', fontSize:'10px' }}>✕</button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button onClick={() => { setEditingCoverId(album.id); setCoverDraft(getCover(album)); }} style={{ padding:'5px 10px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.3)', background:'rgba(10,17,40,0.8)', color:'rgba(247,246,221,0.7)', fontSize:'10px', fontWeight:700, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.06em', textTransform:'uppercase', backdropFilter:'blur(4px)' }}>
-                          🖼 Cover
-                        </button>
-                      )}
-                    </div>
+                    <input
+                      ref={(el) => { coverRefs.current[album.id] = el; }}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg"
+                      style={{ display:'none' }}
+                      onChange={(e) => handleCoverFile(album.id, e)}
+                    />
                   )}
+
+                  {/* Cover area */}
+                  <div style={{ position:'relative', width:'100%', height:'180px', background:'linear-gradient(135deg,#0D1B4A,#0A1128)', overflow:'hidden' }}>
+                    {album.coverPhotoUrl ? (
+                      <img src={album.coverPhotoUrl} alt={album.title} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
+                    ) : (
+                      <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        <span style={{ fontSize:'40px', opacity:0.25 }}>📷</span>
+                      </div>
+                    )}
+
+                    {/* Upload cover button — visible on hover */}
+                    {canManage && (
+                      <button
+                        className="album-cover-btn"
+                        onClick={() => coverRefs.current[album.id]?.click()}
+                        style={{
+                          position:'absolute', bottom:'8px', right:'8px',
+                          padding:'5px 12px', borderRadius:'4px',
+                          border:'1px solid rgba(247,246,221,0.35)',
+                          background:'rgba(10,17,40,0.85)',
+                          color:'rgba(247,246,221,0.8)',
+                          fontSize:'10px', fontWeight:700, cursor:'pointer',
+                          fontFamily:"'Barlow Condensed',sans-serif",
+                          letterSpacing:'0.08em', textTransform:'uppercase',
+                          backdropFilter:'blur(4px)',
+                        }}
+                      >
+                        🖼 {album.coverPhotoUrl ? 'Change Cover' : 'Upload Cover'}
+                      </button>
+                    )}
+                  </div>
 
                   <div style={{ padding:'16px' }}>
                     <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'16px', color:'#f7f6dd', marginBottom:'4px' }}>{album.title}</div>

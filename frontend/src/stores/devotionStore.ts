@@ -58,7 +58,7 @@ export interface SermonNote {
 
 const DEFAULT_SCHEDULE: CampDay[] = [
   {
-    day: 1, label: 'Day 1', date: 'Saturday, June 1',
+    day: 1, label: 'Day 1', date: 'Thursday, July 2',
     theme: 'Encountering God', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '2:00 PM',  title: 'Registration & Check-In',      icon: '🏕️', type: 'activity' },
@@ -73,7 +73,7 @@ const DEFAULT_SCHEDULE: CampDay[] = [
     ],
   },
   {
-    day: 2, label: 'Day 2', date: 'Sunday, June 2',
+    day: 2, label: 'Day 2', date: 'Friday, July 3',
     theme: 'Walking in Faith', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '7:00 AM',  title: 'Morning Devotion',              icon: '🌅', type: 'devotion' },
@@ -92,7 +92,7 @@ const DEFAULT_SCHEDULE: CampDay[] = [
     ],
   },
   {
-    day: 3, label: 'Day 3', date: 'Monday, June 3',
+    day: 3, label: 'Day 3', date: 'Saturday, July 4',
     theme: 'Community & Calling', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '7:00 AM',  title: 'Morning Devotion',                  icon: '🌅', type: 'devotion' },
@@ -110,7 +110,7 @@ const DEFAULT_SCHEDULE: CampDay[] = [
     ],
   },
   {
-    day: 4, label: 'Day 4', date: 'Tuesday, June 4',
+    day: 4, label: 'Day 4', date: 'Sunday, July 5',
     theme: 'Sent & Commissioned', verse: 'Matthew 7:13-14',
     sessions: [
       { time: '7:00 AM',  title: 'Morning Devotion',                   icon: '🌅', type: 'devotion' },
@@ -131,8 +131,8 @@ const DEFAULT_LODGING: LodgingInfo = {
   address:    '123 Camp Road, Singapore 000000',
   directions: 'Take MRT to [Station]. Exit [Exit No.] and walk 5 min to the venue.',
   mapsUrl:    'https://maps.google.com',
-  checkIn:    'Saturday, June 1 — 2:00 PM onwards',
-  checkOut:   'Tuesday, June 4 — by 3:00 PM',
+  checkIn:    'Thursday, July 2 — 3:00 PM onwards',
+  checkOut:   'Sunday, July 5 — by 11:00 AM',
 };
 
 const DEFAULT_FOOD: FoodSpot[] = [
@@ -283,6 +283,6 @@ export const useDevotionStore = create<DevotionState>()(
           foodSpots: s.foodSpots.map((f: FoodSpot, i: number) => i === index ? spot : f),
         })),
     }),
-    { name: 'devotion-store' }
+    { name: 'devotion-store', version: 2 }
   )
 );

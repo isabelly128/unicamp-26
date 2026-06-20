@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 import { MEMBER_USER } from '../stores/authStore';
-import type { PrayerRequest } from '../types';
+import type { PrayerRequest } from '../stores/communityStore';
 
 export const PrayerPage: React.FC = () => {
   const { user, hasRole }                             = useAuthStore();

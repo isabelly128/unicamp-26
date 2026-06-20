@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import type { UserRole } from '../../types';
+import type { UserRole } from '../../stores/authStore';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

@@ -1,36 +1,66 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, UserRole } from '../types';
+
+// ── Inlined types (no dependency on ../types) ─────────────────────────────────
+export type UserRole = 'comms' | 'pastoral' | 'administrator' | 'member';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar?: string;
+}
+
+export const MEMBER_USER: User = {
+  id:    'member-public',
+  name:  'Camper',
+  email: '',
+  role:  'member',
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface MockUser {
+  id:       string;
+  name:     string;
+  email:    string;
+  role:     UserRole;
+  password: string;
+  avatar?:  string;
+}
 
 interface AuthState {
-  user: User | null;
+  user:            User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  login:   (email: string, password: string) => Promise<boolean>;
+  logout:  () => void;
   hasRole: (roles: UserRole[]) => boolean;
 }
 
-interface MockUser extends User { password: string; }
-
 // Staff-only accounts — members access the public site without logging in
 const STAFF_USERS: MockUser[] = [
-  { id: '1', name: 'Sarah Tan',    email: 'comms@camp.sg',    password: 'comms2026',    role: 'comms' },
-  { id: '2', name: 'Pastor David', email: 'pastoral@camp.sg', password: 'pastoral2026', role: 'pastoral' },
-  { id: '3', name: 'Admin Lee',    email: 'admin@camp.sg',    password: 'admin2026',    role: 'administrator' },
+  { id: '1', name: 'Sarah Tan',    email: 'comms@camp.sg',    password: 'comms2024',    role: 'comms' },
+  { id: '2', name: 'Pastor David', email: 'pastoral@camp.sg', password: 'pastoral2024', role: 'pastoral' },
+  { id: '3', name: 'Admin Lee',    email: 'admin@camp.sg',    password: 'admin2024',    role: 'administrator' },
 ];
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      user: null,
+      user:            null,
       isAuthenticated: false,
 
       login: async (email: string, password: string): Promise<boolean> => {
         const found = STAFF_USERS.find(
-          (u) => u.email === email && u.password === password
+          (u: MockUser) => u.email === email && u.password === password
         );
         if (found) {
-          const { password: _pw, ...user } = found;
+          const user: User = {
+            id:    found.id,
+            name:  found.name,
+            email: found.email,
+            role:  found.role,
+          };
           set({ user, isAuthenticated: true });
           return true;
         }
@@ -49,12 +79,3 @@ export const useAuthStore = create<AuthState>()(
     { name: 'staff-auth-store' }
   )
 );
-
-// Public member "user" — used by the member site so store-dependent
-// components (e.g. reflection saving) still work without real auth
-export const MEMBER_USER: User = {
-  id: 'member-public',
-  name: 'Camper',
-  email: '',
-  role: 'member',
-};

@@ -45,7 +45,8 @@ interface CommunityState {
   rejectConviction:    (id: string) => void;
   submitThanksgiving:  (content: string, userId: string, isAnonymous: boolean) => void;
   addPhotoAlbum:       (album: Omit<PhotoAlbum, 'id'>) => void;
-  removePhotoAlbum:    (id: string) => void;
+  removePhotoAlbum:      (id: string) => void;
+  updatePhotoAlbumCover: (id: string, coverUrl: string) => void;
   setPhotosPublic:     (value: boolean) => void;
   setHeroBgUrl:        (url: string) => void;
   setCardImage:        (cardPath: string, url: string) => void;
@@ -120,6 +121,10 @@ export const useCommunityStore = create<CommunityState>()(
         set((s: CommunityState) => ({ photoAlbums: [...s.photoAlbums, a] }));
       },
 
+      updatePhotoAlbumCover: (id: string, coverUrl: string) =>
+        set((s: CommunityState) => ({
+          photoAlbums: s.photoAlbums.map((a: PhotoAlbum) => a.id === id ? { ...a, coverPhotoUrl: coverUrl } : a),
+        })),
       removePhotoAlbum: (id: string) =>
         set((s: CommunityState) => ({
           photoAlbums: s.photoAlbums.filter((a: PhotoAlbum) => a.id !== id),
