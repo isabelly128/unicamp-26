@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 
 const THEME      = 'Stay the Course';
-const CAMP_DATES = 'June 1–4, 2026';
+const CAMP_DATES = 'July 2–5, 2026';
 const VERSE_REF  = 'Matthew 7:13-14';
 const VERSE_FULL = '13 "Enter through the narrow gate. For wide is the gate and broad is the road that leads to destruction, and many enter through it. 14 But small is the gate and narrow the road that leads to life, and only a few find it."';
 
@@ -16,7 +16,7 @@ interface FeatureCard {
 const FEATURE_CARDS: FeatureCard[] = [
   { icon:'📖', label:'CAMP',   labelScript:'Booklet',    path:'/booklet',    desc:'Program flow & schedule',    accent:'#f7f6dd' },
   { icon:'🕊️', label:'DAILY', labelScript:'Devotions',  path:'/devotions',  desc:'Read · Reflect · Record',    accent:'#4A90D9' },
-  { icon:'📝', label:'SERMON', labelScript:'Notes',      path:'/sermons',    desc:'Session notes & questions',  accent:'#f7f6dd' },
+  { icon:'📝', label:'SERMON', labelScript:'Reflections',      path:'/sermons',    desc:'Session reflections',  accent:'#f7f6dd' },
   { icon:'📸', label:'CAMP',   labelScript:'Photos',     path:'/photos',     desc:'Camp memories',              accent:'#5A8A3C' },
   { icon:'🙏', label:'PRAYER', labelScript:'Wall',       path:'/prayer',     desc:'Submit & see requests',      accent:'#4A90D9' },
   { icon:'✝️', label:'',       labelScript:'Testimony',  path:'/testimony',  desc:'Convictions & thanksgiving', accent:'#f7f6dd' },
@@ -133,7 +133,7 @@ export const HomePage: React.FC = () => {
           {/* Headline */}
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ display:'flex', alignItems:'baseline', gap:'14px', flexWrap:'wrap', marginBottom:'4px' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>STAY THE</span>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>STAY The</span>
               <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>Course.</span>
             </div>
             <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'Barlow',sans-serif" }}>

@@ -5,7 +5,7 @@ const NAV_ITEMS = [
   { label: 'HOME',   script: 'Home',        path: '/',             icon: '⛺' },
   { label: 'CAMP',   script: 'Booklet',     path: '/booklet',      icon: '📖' },
   { label: 'DAILY',  script: 'Devotions',   path: '/devotions',    icon: '🕊️' },
-  { label: 'SERMON', script: 'Notes',       path: '/sermons',      icon: '📝' },
+  { label: 'SERMON', script: 'Reflections',       path: '/sermons',      icon: '📝' },
   { label: 'CAMP',   script: 'Photos',      path: '/photos',       icon: '📸' },
   { label: 'PRAYER', script: 'Wall',        path: '/prayer',       icon: '🙏' },
   { label: '',       script: 'Testimony',   path: '/testimony',    icon: '✝️' },
