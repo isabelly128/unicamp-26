@@ -39,9 +39,9 @@ interface AuthState {
 
 // Staff-only accounts — members access the public site without logging in
 const STAFF_USERS: MockUser[] = [
-  { id: '1', name: 'Sarah Tan',    email: 'comms@camp.sg',    password: 'comms2024',    role: 'comms' },
-  { id: '2', name: 'Pastor David', email: 'pastoral@camp.sg', password: 'pastoral2024', role: 'pastoral' },
-  { id: '3', name: 'Admin Lee',    email: 'admin@camp.sg',    password: 'admin2024',    role: 'administrator' },
+  { id: '1', name: 'Sarah Tan',    email: 'comms@camp.sg',    password: 'comms2026',    role: 'comms' },
+  { id: '2', name: 'Pastor David', email: 'pastoral@camp.sg', password: 'pastoral2026', role: 'pastoral' },
+  { id: '3', name: 'Admin Lee',    email: 'admin@camp.sg',    password: 'admin2026',    role: 'administrator' },
 ];
 
 export const useAuthStore = create<AuthState>()(
