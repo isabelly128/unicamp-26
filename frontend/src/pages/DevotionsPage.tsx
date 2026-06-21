@@ -163,7 +163,7 @@ export const DevotionsPage: React.FC = () => {
           <div style={{ background:'#111D3E', border:'1px solid rgba(247,246,221,0.2)', borderRadius:'8px', padding:'20px', marginBottom:'24px' }}>
             <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'14px', letterSpacing:'0.08em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>Add New Devotion</div>
             <div className="dev-upload-grid">
-              <input placeholder="Title (e.g. Day 1 — Encountering God)" value={addTitle} onChange={(e) => setAddTitle(e.target.value)} style={inp}/>
+              <input placeholder="Title (e.g. Day 1 — The Call)" value={addTitle} onChange={(e) => setAddTitle(e.target.value)} style={inp}/>
               <input type="number" placeholder="Day #" value={addDay} min={0} max={10} onChange={(e) => setAddDay(parseInt(e.target.value, 10))} style={inp}/>
               <select value={addPhase} onChange={(e) => setAddPhase(e.target.value as Phase)} style={inp}>
                 <option value="pre">Pre-Camp</option>
