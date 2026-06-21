@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { loginStaff, logoutStaff } from '../services/staffAuthApi';
+import { getStaffSession, loginStaff, logoutStaff } from '../services/staffAuthApi';
 
 // ── Inlined types (no dependency on ../types) ─────────────────────────────────
 export type UserRole = 'comms' | 'pastoral' | 'administrator' | 'member';
@@ -24,8 +24,10 @@ export const MEMBER_USER: User = {
 interface AuthState {
   user:            User | null;
   isAuthenticated: boolean;
+  isSessionVerified: boolean;
   login:   (email: string, password: string) => Promise<boolean>;
   logout:  () => void;
+  validateSession: () => Promise<void>;
   hasRole: (roles: UserRole[]) => boolean;
 }
 
@@ -34,12 +36,13 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user:            null,
       isAuthenticated: false,
+      isSessionVerified: false,
 
       login: async (email: string, password: string): Promise<boolean> => {
         try {
           const apiUser = await loginStaff(email, password);
           if (apiUser) {
-            set({ user: apiUser, isAuthenticated: true });
+            set({ user: apiUser, isAuthenticated: true, isSessionVerified: true });
             return true;
           }
 
@@ -51,7 +54,21 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         void logoutStaff();
-        set({ user: null, isAuthenticated: false });
+        set({ user: null, isAuthenticated: false, isSessionVerified: true });
+      },
+
+      validateSession: async (): Promise<void> => {
+        try {
+          const apiUser = await getStaffSession();
+          if (apiUser) {
+            set({ user: apiUser, isAuthenticated: true, isSessionVerified: true });
+            return;
+          }
+        } catch {
+          // If the API is unavailable, fail closed for staff pages.
+        }
+
+        set({ user: null, isAuthenticated: false, isSessionVerified: true });
       },
 
       hasRole: (roles: UserRole[]): boolean => {
@@ -61,6 +78,12 @@ export const useAuthStore = create<AuthState>()(
         return roles.includes(user.role);
       },
     }),
-    { name: 'staff-auth-store' }
+    {
+      name: 'staff-auth-store',
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    }
   )
 );

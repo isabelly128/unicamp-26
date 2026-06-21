@@ -48,12 +48,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 export const App: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isSessionVerified, validateSession } = useAuthStore();
   const loadCampContent = useDevotionStore((state) => state.loadCampContent);
 
   useEffect(() => {
     void loadCampContent();
   }, [loadCampContent]);
+
+  useEffect(() => {
+    if (!isSessionVerified) {
+      void validateSession();
+    }
+  }, [isSessionVerified, validateSession]);
 
   return (
     <>
@@ -62,7 +68,7 @@ export const App: React.FC = () => {
         <Routes>
           <Route
             path="/login"
-            element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+            element={isAuthenticated && isSessionVerified ? <Navigate to="/" replace /> : <LoginPage />}
           />
           <Route
             path="/*"

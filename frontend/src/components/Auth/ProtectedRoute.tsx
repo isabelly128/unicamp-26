@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import type { UserRole } from '../../stores/authStore';
@@ -12,7 +12,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredRoles,
 }) => {
-  const { isAuthenticated, hasRole } = useAuthStore();
+  const { isAuthenticated, isSessionVerified, validateSession, hasRole } = useAuthStore();
+
+  useEffect(() => {
+    if (!isSessionVerified) {
+      void validateSession();
+    }
+  }, [isSessionVerified, validateSession]);
+
+  if (!isSessionVerified) return null;
 
   // Not logged in → send to /login (resolved to /staff/login by basename)
   if (!isAuthenticated) return <Navigate to="/login" replace />;

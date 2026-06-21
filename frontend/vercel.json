@@ -1,7 +1,12 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/staff/(.*)", "destination": "/index.html" },
+    { "source": "/booklet", "destination": "/index.html" },
+    { "source": "/devotions", "destination": "/index.html" },
+    { "source": "/sermons", "destination": "/index.html" },
+    { "source": "/photos", "destination": "/index.html" },
+    { "source": "/prayer", "destination": "/index.html" },
+    { "source": "/testimony", "destination": "/index.html" }
   ],
   "headers": [
     {

@@ -2,20 +2,21 @@
 
 Run `camp_content.sql` once in the Supabase SQL editor for project `lijbxbvitmhrefmnyuys`.
 
-Set these Vercel environment variables for the frontend project:
+Set these environment variables locally and in Vercel:
 
 ```text
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-ADMIN_SESSION_SECRET=any-long-random-string
+VITE_SUPABASE_URL=https://lijbxbvitmhrefmnyuys.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-or-anon-key
 ```
 
-Optional overrides:
+Create a Supabase Auth user for the staff login:
 
 ```text
-SUPABASE_URL=https://lijbxbvitmhrefmnyuys.supabase.co
-ADMIN_EMAIL=admin@camp.sg
-ADMIN_PASSWORD=your-admin-password
-ADMIN_NAME=Admin Lee
+Email: admin@camp.sg
+Password: admin2026
 ```
 
-Keep `SUPABASE_SERVICE_ROLE_KEY` server-side only. Do not add it as a `VITE_` variable.
+Run `camp_content.sql` after creating the table so RLS allows public reads and staff writes.
+
+Do not put a `sb_secret_...` key in any `VITE_` variable. Supabase blocks secret keys in browsers,
+and exposing one would give full database access.
