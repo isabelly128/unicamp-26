@@ -12,8 +12,8 @@ const NAV_ITEMS = [
 ];
 
 const QUICK_LINKS = [
-  { label: 'Spotify Playlist', url: 'https://open.spotify.com/playlist/your-id', icon: '🎵' },
-  { label: 'Telegram Group',   url: 'https://t.me/your-group',                   icon: '💬' },
+  { label: 'Spotify Playlist', url: 'https://open.spotify.com/playlist/2glknYShkjRa8AGoLLEITH?si=u9r9qzrzTfyzD9DnRGTbrw', icon: '🎵' },
+  { label: 'Telegram Group',   url: 'https://t.me/+byIFKl5mFR43ZjI1',                   icon: '💬' },
 ];
 
 export const MemberNavbar: React.FC = () => {
