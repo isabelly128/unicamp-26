@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useDevotionStore } from '../stores/devotionStore';
 import type { SermonNote } from '../stores/devotionStore';
+import { SyncStatus } from '../components/SyncStatus';
 
 const CSS = `
   .ser-page { padding: 24px; max-width: 860px; }
@@ -69,6 +70,7 @@ export const SermonsPage: React.FC = () => {
           </div>
           {canEdit && <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); }} style={outlineBtn}>+ Add Session</button>}
         </div>
+        <SyncStatus visible={canEdit} />
 
         {showAdd && canEdit && (
           <div style={formCard}>

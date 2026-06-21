@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MemberNavbar } from './components/Navigation/MemberNavbar';
+import { useDevotionStore } from './stores/devotionStore';
 
 import { HomePage }       from './pages/HomePage';
 import { BookletPage }    from './pages/BookletPage';
@@ -35,25 +36,33 @@ const GLOBAL_CSS = `
   input:focus,textarea:focus{ border-color:rgba(247,246,221,0.4)!important; box-shadow:0 0 0 3px rgba(247,246,221,0.08); }
 `;
 
-export const MemberApp: React.FC = () => (
-  <>
-    <style>{GLOBAL_CSS}</style>
-    <BrowserRouter>
-      <div className="app-layout">
-        <MemberNavbar />
-        <main className="app-main">
-          <Routes>
-            <Route path="/"            element={<HomePage />} />
-            <Route path="/booklet"     element={<BookletPage />} />
-            <Route path="/devotions"   element={<DevotionsPage />} />
-            <Route path="/sermons"     element={<SermonsPage />} />
-            <Route path="/photos"      element={<PhotosPage />} />
-            <Route path="/prayer"      element={<PrayerPage />} />
-            <Route path="/testimony"   element={<TestimonyPage />} />
-            <Route path="*"            element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
-  </>
-);
+export const MemberApp: React.FC = () => {
+  const loadCampContent = useDevotionStore((state) => state.loadCampContent);
+
+  useEffect(() => {
+    void loadCampContent();
+  }, [loadCampContent]);
+
+  return (
+    <>
+      <style>{GLOBAL_CSS}</style>
+      <BrowserRouter>
+        <div className="app-layout">
+          <MemberNavbar />
+          <main className="app-main">
+            <Routes>
+              <Route path="/"            element={<HomePage />} />
+              <Route path="/booklet"     element={<BookletPage />} />
+              <Route path="/devotions"   element={<DevotionsPage />} />
+              <Route path="/sermons"     element={<SermonsPage />} />
+              <Route path="/photos"      element={<PhotosPage />} />
+              <Route path="/prayer"      element={<PrayerPage />} />
+              <Route path="/testimony"   element={<TestimonyPage />} />
+              <Route path="*"            element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+        </div>
+      </BrowserRouter>
+    </>
+  );
+};

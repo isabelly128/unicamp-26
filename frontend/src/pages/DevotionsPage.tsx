@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useDevotionStore } from '../stores/devotionStore';
 import type { Devotion } from '../stores/devotionStore';
+import { SyncStatus } from '../components/SyncStatus';
 
 type Phase = 'pre' | 'during' | 'post';
 const PHASE_LABELS: Record<Phase, string> = { pre: 'Pre-Camp', during: 'During Camp', post: 'Post-Camp' };
@@ -155,6 +156,7 @@ export const DevotionsPage: React.FC = () => {
             }}>+ Add Devotion</button>
           )}
         </div>
+        <SyncStatus visible={canEdit} />
 
         {/* Add form */}
         {showAdd && canEdit && (

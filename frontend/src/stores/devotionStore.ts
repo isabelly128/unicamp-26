@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import {
+  fetchCampContent,
+  saveCampContent,
+  type CampContentPayload,
+} from '../services/campContentApi';
 
 // ── Type definitions ──────────────────────────────────────────────────────────
 export interface DaySession {
@@ -150,7 +155,12 @@ interface DevotionState {
   schedule:         CampDay[];
   lodging:          LodgingInfo;
   foodSpots:        FoodSpot[];
+  remoteStatus:     'idle' | 'loading' | 'synced' | 'error';
+  remoteError:      string | null;
+  lastSyncedAt:     string | null;
 
+  loadCampContent:     () => Promise<void>;
+  syncCampContent:     () => Promise<void>;
   addDevotion:         (d: Omit<Devotion, 'id' | 'uploadedAt'>) => void;
   updateDevotion:      (id: string, updates: Partial<Omit<Devotion, 'id'>>) => void;
   removeDevotion:      (id: string) => void;
@@ -196,9 +206,37 @@ const INITIAL_SERMONS: SermonNote[] = [
   },
 ];
 
+const contentFromState = (state: DevotionState): CampContentPayload => ({
+  devotions: state.devotions,
+  sermonNotes: state.sermonNotes,
+  packingListText: state.packingListText,
+  volDedicationText: state.volDedicationText,
+  schedule: state.schedule,
+  lodging: state.lodging,
+  foodSpots: state.foodSpots,
+});
+
+const withDefaults = (content: Partial<CampContentPayload>): CampContentPayload => ({
+  devotions: content.devotions ?? INITIAL_DEVOTIONS,
+  sermonNotes: content.sermonNotes ?? INITIAL_SERMONS,
+  packingListText: content.packingListText ?? '',
+  volDedicationText: content.volDedicationText ?? '',
+  schedule: content.schedule ?? DEFAULT_SCHEDULE,
+  lodging: content.lodging ?? DEFAULT_LODGING,
+  foodSpots: content.foodSpots ?? DEFAULT_FOOD,
+});
+
+const errorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : 'Unable to sync camp content';
+
 export const useDevotionStore = create<DevotionState>()(
   persist(
-    (set) => ({
+    (set, get) => {
+      const syncAfterSet = (): void => {
+        void get().syncCampContent();
+      };
+
+      return ({
       devotions:        INITIAL_DEVOTIONS,
       sermonNotes:      INITIAL_SERMONS,
       packingListText:  '',
@@ -206,47 +244,93 @@ export const useDevotionStore = create<DevotionState>()(
       schedule:         DEFAULT_SCHEDULE,
       lodging:          DEFAULT_LODGING,
       foodSpots:        DEFAULT_FOOD,
+      remoteStatus:     'idle',
+      remoteError:      null,
+      lastSyncedAt:     null,
+
+      loadCampContent: async (): Promise<void> => {
+        if (get().remoteStatus === 'loading') return;
+
+        set({ remoteStatus: 'loading', remoteError: null });
+
+        try {
+          const content = await fetchCampContent();
+          set({
+            ...(content ? withDefaults(content) : {}),
+            remoteStatus: 'synced',
+            remoteError: null,
+            lastSyncedAt: new Date().toISOString(),
+          });
+        } catch (error) {
+          set({
+            remoteStatus: 'error',
+            remoteError: errorMessage(error),
+          });
+        }
+      },
+
+      syncCampContent: async (): Promise<void> => {
+        try {
+          await saveCampContent(contentFromState(get()));
+          set({
+            remoteStatus: 'synced',
+            remoteError: null,
+            lastSyncedAt: new Date().toISOString(),
+          });
+        } catch (error) {
+          set({
+            remoteStatus: 'error',
+            remoteError: errorMessage(error),
+          });
+        }
+      },
 
       addDevotion: (d: Omit<Devotion, 'id' | 'uploadedAt'>) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           devotions: [...s.devotions, { ...d, id: `d${Date.now()}`, uploadedAt: new Date().toISOString() }],
-        })),
+        })); syncAfterSet(); },
 
       updateDevotion: (id: string, updates: Partial<Omit<Devotion, 'id'>>) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           devotions: s.devotions.map((d: Devotion) => d.id === id ? { ...d, ...updates } : d),
-        })),
+        })); syncAfterSet(); },
 
       removeDevotion: (id: string) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           devotions: s.devotions.filter((d: Devotion) => d.id !== id),
-        })),
+        })); syncAfterSet(); },
 
       addSermonNote: (n: Omit<SermonNote, 'id' | 'uploadedAt'>) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           sermonNotes: [...s.sermonNotes, { ...n, id: `sn${Date.now()}`, uploadedAt: new Date().toISOString() }],
-        })),
+        })); syncAfterSet(); },
 
       updateSermonNote: (id: string, updates: Partial<Omit<SermonNote, 'id'>>) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           sermonNotes: s.sermonNotes.map((n: SermonNote) => n.id === id ? { ...n, ...updates } : n),
-        })),
+        })); syncAfterSet(); },
 
       removeSermonNote: (id: string) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           sermonNotes: s.sermonNotes.filter((n: SermonNote) => n.id !== id),
-        })),
+        })); syncAfterSet(); },
 
-      setPackingListText:  (text: string) => set({ packingListText: text }),
-      setVolDedicationText: (text: string) => set({ volDedicationText: text }),
+      setPackingListText: (text: string) => {
+        set({ packingListText: text });
+        syncAfterSet();
+      },
+      setVolDedicationText: (text: string) => {
+        set({ volDedicationText: text });
+        syncAfterSet();
+      },
 
       updateDay: (dayIndex: number, updated: CampDay) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           schedule: s.schedule.map((d: CampDay, i: number) => i === dayIndex ? updated : d),
-        })),
+        })); syncAfterSet(); },
 
       updateSession: (dayIndex: number, sessionIndex: number, updated: Partial<DaySession>) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           schedule: s.schedule.map((d: CampDay, di: number) =>
             di !== dayIndex ? d : {
               ...d,
@@ -255,34 +339,53 @@ export const useDevotionStore = create<DevotionState>()(
               ),
             }
           ),
-        })),
+        })); syncAfterSet(); },
 
       addSession: (dayIndex: number, session: DaySession) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           schedule: s.schedule.map((d: CampDay, i: number) =>
             i !== dayIndex ? d : { ...d, sessions: [...d.sessions, session] }
           ),
-        })),
+        })); syncAfterSet(); },
 
       removeSession: (dayIndex: number, sessionIndex: number) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           schedule: s.schedule.map((d: CampDay, di: number) =>
             di !== dayIndex ? d : {
               ...d,
               sessions: d.sessions.filter((_: DaySession, si: number) => si !== sessionIndex),
             }
           ),
-        })),
+        })); syncAfterSet(); },
 
-      setLodging: (info: LodgingInfo) => set({ lodging: info }),
+      setLodging: (info: LodgingInfo) => {
+        set({ lodging: info });
+        syncAfterSet();
+      },
 
-      setFoodSpots: (spots: FoodSpot[]) => set({ foodSpots: spots }),
+      setFoodSpots: (spots: FoodSpot[]) => {
+        set({ foodSpots: spots });
+        syncAfterSet();
+      },
 
       updateFoodSpot: (index: number, spot: FoodSpot) =>
-        set((s: DevotionState) => ({
+        { set((s: DevotionState) => ({
           foodSpots: s.foodSpots.map((f: FoodSpot, i: number) => i === index ? spot : f),
-        })),
-    }),
-    { name: 'devotion-store', version: 2 }
+        })); syncAfterSet(); },
+    });
+    },
+    {
+      name: 'devotion-store',
+      version: 3,
+      partialize: (state) => ({
+        devotions: state.devotions,
+        sermonNotes: state.sermonNotes,
+        packingListText: state.packingListText,
+        volDedicationText: state.volDedicationText,
+        schedule: state.schedule,
+        lodging: state.lodging,
+        foodSpots: state.foodSpots,
+      }),
+    }
   )
 );

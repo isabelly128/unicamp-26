@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useDevotionStore } from '../stores/devotionStore';
 import type { CampDay, DaySession, LodgingInfo, FoodSpot } from '../stores/devotionStore';
+import { SyncStatus } from '../components/SyncStatus';
 
 type Section = 'packing' | 'day1' | 'day2' | 'day3' | 'day4' | 'vol' | 'lodging' | 'food';
 
@@ -174,6 +175,7 @@ export const BookletPage: React.FC = () => {
           <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Booklet</h1>
           <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>4 Days · 3 Nights · July 2–5, 2026</p>
         </div>
+        <SyncStatus visible={canEdit} />
 
         {/* Tabs */}
         <div className="bk-tabs">
