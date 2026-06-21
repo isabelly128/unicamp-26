@@ -169,12 +169,12 @@ interface DevotionState {
 }
 
 const INITIAL_DEVOTIONS: Devotion[] = [
-  { id: 'd1',   title: 'Day 1 — Encountering God',      day: 1, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
-  { id: 'd2',   title: 'Day 2 — Walking in Faith',      day: 2, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
-  { id: 'd3',   title: 'Day 3 — Community & Calling',   day: 3, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
-  { id: 'd4',   title: 'Day 4 — Sent & Commissioned',   day: 4, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
-  { id: 'pre1', title: 'Pre-Camp — Prepare Your Heart', day: 0, phase: 'pre',    pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
-  { id: 'post1',title: 'Post-Camp — Carrying the Fire', day: 5, phase: 'post',   pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd1',   title: 'Day 1 — ',      day: 1, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd2',   title: 'Day 2 — ',      day: 2, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd3',   title: 'Day 3 — ',   day: 3, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'd4',   title: 'Day 4 — ',   day: 4, phase: 'during', pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'pre1', title: 'Pre-Camp — ', day: 0, phase: 'pre',    pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
+  { id: 'post1',title: 'Post-Camp — ', day: 5, phase: 'post',   pdfUrl: '', uploadedAt: '', uploadedBy: 'Admin' },
 ];
 
 const INITIAL_SERMONS: SermonNote[] = [
