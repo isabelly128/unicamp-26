@@ -146,13 +146,13 @@ export const HomePage: React.FC = () => {
           }}/>
 
           {/* Date label */}
-          <div style={{ position:'absolute', top:'28px', left:'48px', fontSize:'11px', letterSpacing:'0.2em', color:'rgba(247,246,221,0.6)', fontWeight:600, textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif", zIndex:1 }}>{CAMP_DATES}</div>
+          <div style={{ position:'absolute', top:'28px', left:'48px', fontSize:'11px', letterSpacing:'0.2em', color:'rgba(247,246,221,0.6)', fontWeight:600, textTransform:'uppercase', fontFamily:"'arial black regular',sans-serif", zIndex:1 }}>{CAMP_DATES}</div>
 
           {/* Admin hero photo upload */}
           {isAdmin && (
             <div style={{ position:'absolute', top:'24px', right:'24px', zIndex:2, display:'flex', gap:'8px', alignItems:'center' }}>
               <input ref={heroBgRef} type="file" accept="image/png,image/jpeg,image/jpg" style={{ display:'none' }} onChange={handleHeroBgFile}/>
-              <button onClick={() => heroBgRef.current?.click()} disabled={heroBgLoading} style={{ padding:'6px 12px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.25)', background:'rgba(10,17,40,0.75)', color:'rgba(247,246,221,0.7)', fontSize:'10px', fontWeight:700, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', backdropFilter:'blur(4px)' }}>
+              <button onClick={() => heroBgRef.current?.click()} disabled={heroBgLoading} style={{ padding:'6px 12px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.25)', background:'rgba(10,17,40,0.75)', color:'rgba(247,246,221,0.7)', fontSize:'10px', fontWeight:700, cursor:'pointer', fontFamily:"'arial black regular',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', backdropFilter:'blur(4px)' }}>
                 {heroBgLoading ? 'Uploading…' : `🖼 ${heroBgUrl ? 'Change Photo' : 'Add Photo'}`}
               </button>
               {heroBgUrl && (
@@ -164,22 +164,22 @@ export const HomePage: React.FC = () => {
           {/* Headline */}
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ display:'flex', alignItems:'baseline', gap:'14px', flexWrap:'wrap', marginBottom:'4px' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>The</span>
+              <span style={{ fontFamily:"'arial black regular',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>The</span>
               <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>Call</span>
             </div>
-            <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'Barlow',sans-serif" }}>
+            <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'arial black regular',sans-serif" }}>
               {VERSE_FULL} — {VERSE_REF}
             </p>
             <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
-              <a href="https://open.spotify.com/playlist/2glknYShkjRa8AGoLLEITH?si=u9r9qzrzTfyzD9DnRGTbrw" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#1DB954', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>🎵 Camp Playlist</a>
-              <a href="https://t.me/+byIFKl5mFR43ZjI1" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#0088cc', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>💬 Telegram</a>
+              <a href="https://open.spotify.com/playlist/2glknYShkjRa8AGoLLEITH?si=u9r9qzrzTfyzD9DnRGTbrw" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#1DB954', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'arial black regular',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>🎵 Camp Playlist</a>
+              <a href="https://t.me/+byIFKl5mFR43ZjI1" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:'7px', padding:'10px 18px', background:'#0088cc', borderRadius:'4px', textDecoration:'none', color:'#fff', fontSize:'11px', fontWeight:700, fontFamily:"'arial black regular',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' }}>💬 Telegram</a>
             </div>
           </div>
         </div>
 
         {/* Welcome */}
         <div style={{ marginBottom:'24px' }}>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#f7f6dd' }}>WELCOME BACK, </span>
+          <span style={{ fontFamily:"'arial black regular',sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#f7f6dd' }}>WELCOME BACK, </span>
           <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'24px', color:'#f7f6dd' }}>{firstName}.</span>
         </div>
 
@@ -220,10 +220,10 @@ export const HomePage: React.FC = () => {
                   {/* Text — sits above the gradient overlay (::before) */}
                   <div style={{ position:'relative', zIndex:1 }}>
                     {card.label && (
-                      <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'10px', letterSpacing:'0.12em', textTransform:'uppercase', color: card.accent, marginBottom:'2px' }}>{card.label}</div>
+                      <div style={{ fontFamily:"'arial black regular',sans-serif", fontWeight:800, fontSize:'10px', letterSpacing:'0.12em', textTransform:'uppercase', color: card.accent, marginBottom:'2px' }}>{card.label}</div>
                     )}
                     <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'20px', color:'#f7f6dd', lineHeight:1.1, marginBottom:'6px' }}>{card.labelScript}</div>
-                    <div style={{ fontSize:'11px', color: bgUrl ? 'rgba(247,246,221,0.55)' : 'rgba(247,246,221,0.35)', fontFamily:"'Barlow',sans-serif" }}>{card.desc}</div>
+                    <div style={{ fontSize:'11px', color: bgUrl ? 'rgba(247,246,221,0.55)' : 'rgba(247,246,221,0.35)', fontFamily:"'arial black regular',sans-serif" }}>{card.desc}</div>
                   </div>
                 </Link>
 
@@ -238,7 +238,7 @@ export const HomePage: React.FC = () => {
                         background:'rgba(10,17,40,0.88)',
                         color:'rgba(247,246,221,0.8)',
                         fontSize:'9px', fontWeight:700, cursor:'pointer',
-                        fontFamily:"'Barlow Condensed',sans-serif",
+                        fontFamily:"'arial black regular',sans-serif",
                         letterSpacing:'0.08em', textTransform:'uppercase',
                         backdropFilter:'blur(6px)',
                       }}
@@ -253,7 +253,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         {isAdmin && (
-          <p style={{ marginTop:'16px', fontSize:'11px', color:'rgba(247,246,221,0.2)', fontFamily:"'Barlow',sans-serif", fontStyle:'italic' }}>
+          <p style={{ marginTop:'16px', fontSize:'11px', color:'rgba(247,246,221,0.2)', fontFamily:"'arial black regular',sans-serif", fontStyle:'italic' }}>
             Hover over a card and click 🖼 to upload a PNG or JPG background photo.
           </p>
         )}
