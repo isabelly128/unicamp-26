@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
             UNI<span style={{ color: '#f7f6dd' }}>CAMP</span>
           </div>
           <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontSize:'11px', color:'rgba(247,246,221,0.35)', marginTop:'4px' }}>
-            Stay the Course
+            The Call 
           </div>
           <div style={{ fontSize:'10px', letterSpacing:'0.1em', color:'rgba(247,246,221,0.5)', marginTop:'8px', fontFamily:"'Barlow Condensed',sans-serif", textTransform:'uppercase' }}>
             {user?.name} · <span style={{ opacity: 0.7 }}>{user?.role}</span>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
 const VERSE = '13 "Enter through the narrow gate. For wide is the gate and broad is the road that leads to destruction, and many enter through it. 14 But small is the gate and narrow the road that leads to life, and only a few find it." — Matthew 7:13-14';
-const THEME = 'Stay the Course';
+const THEME = 'The Call';
 
 export const LoginPage: FC = () => {
   const [email, setEmail]       = useState<string>('');
@@ -60,8 +60,8 @@ export const LoginPage: FC = () => {
             UNICAMP 2026 — Staff Portal
           </div>
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em', marginBottom:'8px' }}>STAY THE</div>
-            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#f7f6dd', marginBottom:'8px' }}>Course.</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(72px,10vw,120px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em', marginBottom:'8px' }}>The</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(52px,7vw,88px)', lineHeight:0.95, color:'#f7f6dd', marginBottom:'8px' }}>Call.</div>
             <p style={{ fontFamily:"'Barlow',sans-serif", fontSize:'13px', color:'rgba(247,246,221,0.4)', fontStyle:'italic', lineHeight:1.8, maxWidth:'360px', marginTop:'20px' }}>
               {VERSE}
             </p>
@@ -79,8 +79,8 @@ export const LoginPage: FC = () => {
           {/* Mobile-only mini header */}
           <div style={{ display:'none', marginBottom:'32px' }} className="login-mobile-header">
             <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(247,246,221,0.5)', marginBottom:'12px' }}>UNICAMP 2026</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'40px', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>STAY THE</div>
-            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'32px', lineHeight:1, color:'#f7f6dd', marginBottom:'20px' }}>Course.</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'40px', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>The</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'32px', lineHeight:1, color:'#f7f6dd', marginBottom:'20px' }}>Call.</div>
             <a href="/" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.2)', color:'rgba(247,246,221,0.5)', textDecoration:'none', fontSize:'10px', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif" }}>
               ← Member Site
             </a>

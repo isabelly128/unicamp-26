@@ -35,7 +35,7 @@ export const MemberNavbar: React.FC = () => {
             UNI<span style={{ color: '#f7f6dd' }}>CAMP</span>
           </div>
           <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontSize:'11px', color:'rgba(247,246,221,0.35)', marginTop:'4px' }}>
-            Stay the Course
+            The Call
           </div>
           <div style={{ marginTop:'10px', display:'inline-block', padding:'3px 10px', borderRadius:'100px', background:'rgba(247,246,221,0.1)', border:'1px solid rgba(247,246,221,0.2)', fontSize:'10px', fontWeight:700, letterSpacing:'0.1em', color:'#f7f6dd', textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif" }}>
             Member
