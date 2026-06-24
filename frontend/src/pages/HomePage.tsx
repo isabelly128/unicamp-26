@@ -13,11 +13,11 @@ interface FeatureCard {
 }
 
 const FEATURE_CARDS: FeatureCard[] = [
-  { icon:'📖', label:'CAMP',   labelScript:'Booklet',   path:'/booklet',   desc:'Program flow & schedule',    accent:'#f7f6dd' },
+  { icon:'📖', label:'CAMP',   labelScript:'Booklet',   path:'/booklet',   desc:'Packing · Schedule · Lodging',    accent:'#f7f6dd' },
   { icon:'🕊️', label:'DAILY', labelScript:'Devotions', path:'/devotions', desc:'Read · Reflect · Record',    accent:'#4A90D9' },
-  { icon:'📝', label:'SERMON', labelScript:'Notes',     path:'/sermons',   desc:'Session notes & questions',  accent:'#f7f6dd' },
-  { icon:'📸', label:'CAMP',   labelScript:'Photos',    path:'/photos',    desc:'Camp memories',              accent:'#5A8A3C' },
-  { icon:'🙏', label:'PRAYER', labelScript:'Wall',      path:'/prayer',    desc:'Submit & see requests',      accent:'#4A90D9' },
+  { icon:'📝', label:'SERMON', labelScript:'Notes',     path:'/sermons',   desc:'Discussion Questions',  accent:'#f7f6dd' },
+  { icon:'📸', label:'CAMP',   labelScript:'Photos',    path:'/photos',    desc:'Relive the Memories',              accent:'#5A8A3C' },
+  { icon:'🙏', label:'PRAYER', labelScript:'Wall',      path:'/prayer',    desc:'Pray & Be Prayed For',      accent:'#4A90D9' },
   { icon:'✝️', label:'',       labelScript:'Testimony', path:'/testimony', desc:'Convictions & thanksgiving', accent:'#f7f6dd' },
 ];
 
@@ -92,7 +92,7 @@ export const HomePage: React.FC = () => {
   const { user, hasRole }                         = useAuthStore();
   const { heroBgUrl, setHeroBgUrl,
           cardImages, setCardImage }               = useCommunityStore();
-  const firstName                                 = user?.name?.split(' ')[0] ?? 'friend';
+  const firstName                                 = user?.name?.split(' ')[0] ?? 'disciple';
   const isAdmin                                   = hasRole(['administrator']);
 
   const heroBgRef                                 = useRef<HTMLInputElement>(null);
