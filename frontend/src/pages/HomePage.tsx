@@ -165,7 +165,7 @@ export const HomePage: React.FC = () => {
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ display:'flex', alignItems:'baseline', gap:'14px', flexWrap:'wrap', marginBottom:'4px' }}>
               <span style={{ fontFamily:"'arial black regular',sans-serif", fontWeight:900, fontSize:'clamp(48px,8vw,88px)', lineHeight:0.9, textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.02em' }}>The</span>
-              <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>Call</span>
+              <span style={{ fontFamily:"'Alex Brush',cursive", fontStyle:'italic', fontWeight:700, fontSize:'clamp(36px,6vw,68px)', lineHeight:0.9, color:'#f7f6dd' }}>Call</span>
             </div>
             <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', fontStyle:'italic', lineHeight:1.8, maxWidth:'440px', marginTop:'16px', marginBottom:'24px', fontFamily:"'arial black regular',sans-serif" }}>
               {VERSE_FULL} — {VERSE_REF}
@@ -180,7 +180,7 @@ export const HomePage: React.FC = () => {
         {/* Welcome */}
         <div style={{ marginBottom:'24px' }}>
           <span style={{ fontFamily:"'arial black regular',sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', letterSpacing:'-0.01em', color:'#f7f6dd' }}>WELCOME BACK, </span>
-          <span style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'24px', color:'#f7f6dd' }}>{firstName}.</span>
+          <span style={{ fontFamily:"'Alex Brush',cursive", fontStyle:'italic', fontWeight:700, fontSize:'24px', color:'#f7f6dd' }}>{firstName}.</span>
         </div>
 
         {/* Feature grid */}
@@ -222,7 +222,7 @@ export const HomePage: React.FC = () => {
                     {card.label && (
                       <div style={{ fontFamily:"'arial black regular',sans-serif", fontWeight:800, fontSize:'10px', letterSpacing:'0.12em', textTransform:'uppercase', color: card.accent, marginBottom:'2px' }}>{card.label}</div>
                     )}
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'20px', color:'#f7f6dd', lineHeight:1.1, marginBottom:'6px' }}>{card.labelScript}</div>
+                    <div style={{ fontFamily:"'Alex Brush',cursive", fontStyle:'italic', fontWeight:700, fontSize:'20px', color:'#f7f6dd', lineHeight:1.1, marginBottom:'6px' }}>{card.labelScript}</div>
                     <div style={{ fontSize:'11px', color: bgUrl ? 'rgba(247,246,221,0.55)' : 'rgba(247,246,221,0.35)', fontFamily:"'arial black regular',sans-serif" }}>{card.desc}</div>
                   </div>
                 </Link>

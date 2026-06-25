@@ -64,9 +64,9 @@ export const PhotosPage: React.FC = () => {
         {/* Header */}
         <div className="photos-header">
           <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Camp</div>
-            <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Photos</h1>
-            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>Camp memories — auto-updated via Google Drive</p>
+            <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Camp</div>
+            <h1 style={{ fontFamily:"'Alex Brush',cursive", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Photos</h1>
+            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"Arial,Helvetica,sans-serif" }}>Camp memories — auto-updated via Google Drive</p>
           </div>
           {canManage && (
             <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', flexShrink:0 }}>
@@ -76,11 +76,11 @@ export const PhotosPage: React.FC = () => {
                 background:  photosPublic ? 'rgba(90,138,60,0.12)' : 'rgba(247,246,221,0.08)',
                 color:       photosPublic ? '#8BC34A' : '#f7f6dd',
                 fontSize:'11px', fontWeight:700, cursor:'pointer',
-                fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase',
+                fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase',
               }}>
                 {photosPublic ? '✓ Visible to Members' : '🔒 Hidden from Members'}
               </button>
-              <button onClick={() => setShowAdd(!showAdd)} style={{ padding:'10px 16px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'rgba(255,255,255,0.04)', color:'rgba(247,246,221,0.6)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' }}>
+              <button onClick={() => setShowAdd(!showAdd)} style={{ padding:'10px 16px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'rgba(255,255,255,0.04)', color:'rgba(247,246,221,0.6)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' }}>
                 + Add Album
               </button>
             </div>
@@ -90,11 +90,11 @@ export const PhotosPage: React.FC = () => {
         {/* Add album form */}
         {showAdd && canManage && (
           <div style={{ background:'#111D3E', border:'1px solid rgba(247,246,221,0.2)', borderRadius:'8px', padding:'20px', marginBottom:'24px' }}>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>Add Album</div>
+            <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>Add Album</div>
             <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'12px' }}>
               <input placeholder="Album title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} style={inp}/>
               <input placeholder="Google Drive / Photos URL" value={newUrl} onChange={(e) => setNewUrl(e.target.value)} style={inp}/>
-              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif" }}>
+              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"Arial,Helvetica,sans-serif" }}>
                 Cover photo: upload after adding the album using the 🖼 button on the card.
               </div>
             </div>
@@ -109,8 +109,8 @@ export const PhotosPage: React.FC = () => {
         {!canView && (
           <div style={{ textAlign:'center', padding:'64px 24px', background:'#111D3E', borderRadius:'8px', border:'1px solid rgba(255,255,255,0.06)' }}>
             <div style={{ fontSize:'48px', marginBottom:'16px' }}>📸</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'22px', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'8px' }}>Photos Coming Soon</div>
-            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'14px', fontFamily:"'Barlow',sans-serif", maxWidth:'320px', margin:'0 auto', lineHeight:1.7 }}>
+            <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:900, fontSize:'22px', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'8px' }}>Photos Coming Soon</div>
+            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'14px', fontFamily:"Arial,Helvetica,sans-serif", maxWidth:'320px', margin:'0 auto', lineHeight:1.7 }}>
               Camp photos will be shared here after camp. Check back soon!
             </p>
           </div>
@@ -120,7 +120,7 @@ export const PhotosPage: React.FC = () => {
         {canView && (
           <>
             {canManage && (
-              <div style={{ padding:'12px 16px', borderRadius:'6px', marginBottom:'20px', background: photosPublic ? 'rgba(90,138,60,0.08)' : 'rgba(247,246,221,0.06)', border: `1px solid ${photosPublic ? 'rgba(90,138,60,0.2)' : 'rgba(247,246,221,0.15)'}`, fontSize:'12px', fontFamily:"'Barlow',sans-serif", color: photosPublic ? '#8BC34A' : 'rgba(247,246,221,0.6)' }}>
+              <div style={{ padding:'12px 16px', borderRadius:'6px', marginBottom:'20px', background: photosPublic ? 'rgba(90,138,60,0.08)' : 'rgba(247,246,221,0.06)', border: `1px solid ${photosPublic ? 'rgba(90,138,60,0.2)' : 'rgba(247,246,221,0.15)'}`, fontSize:'12px', fontFamily:"Arial,Helvetica,sans-serif", color: photosPublic ? '#8BC34A' : 'rgba(247,246,221,0.6)' }}>
                 {photosPublic ? '✓ Photos are visible to all members.' : '⚠ Photos are hidden from members. Toggle above to reveal them.'}
               </div>
             )}
@@ -162,7 +162,7 @@ export const PhotosPage: React.FC = () => {
                           background:'rgba(10,17,40,0.85)',
                           color:'rgba(247,246,221,0.8)',
                           fontSize:'10px', fontWeight:700, cursor:'pointer',
-                          fontFamily:"'Barlow Condensed',sans-serif",
+                          fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif",
                           letterSpacing:'0.08em', textTransform:'uppercase',
                           backdropFilter:'blur(4px)',
                         }}
@@ -173,16 +173,16 @@ export const PhotosPage: React.FC = () => {
                   </div>
 
                   <div style={{ padding:'16px' }}>
-                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'16px', color:'#f7f6dd', marginBottom:'4px' }}>{album.title}</div>
-                    <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"'Barlow',sans-serif", marginBottom:'14px' }}>
+                    <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:700, fontSize:'16px', color:'#f7f6dd', marginBottom:'4px' }}>{album.title}</div>
+                    <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"Arial,Helvetica,sans-serif", marginBottom:'14px' }}>
                       Updated {new Date(album.updatedAt).toLocaleDateString()}
                     </div>
                     <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
-                      <a href={album.googlePhotosUrl} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', background:'#f7f6dd', color:'#0A1128', textDecoration:'none', fontSize:'11px', fontWeight:800, fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' }}>
+                      <a href={album.googlePhotosUrl} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', background:'#f7f6dd', color:'#0A1128', textDecoration:'none', fontSize:'11px', fontWeight:800, fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' }}>
                         View Album ↗
                       </a>
                       {canManage && (
-                        <button onClick={() => removePhotoAlbum(album.id)} style={{ padding:'8px 12px', borderRadius:'4px', border:'1px solid rgba(220,80,80,0.3)', background:'transparent', color:'rgba(220,80,80,0.6)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif" }}>Remove</button>
+                        <button onClick={() => removePhotoAlbum(album.id)} style={{ padding:'8px 12px', borderRadius:'4px', border:'1px solid rgba(220,80,80,0.3)', background:'transparent', color:'rgba(220,80,80,0.6)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif" }}>Remove</button>
                       )}
                     </div>
                   </div>
@@ -192,11 +192,11 @@ export const PhotosPage: React.FC = () => {
 
             {/* Embedded Drive folder */}
             <div style={{ marginTop:'32px' }}>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(247,246,221,0.3)', marginBottom:'12px' }}>Full Camp Folder</div>
+              <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(247,246,221,0.3)', marginBottom:'12px' }}>Full Camp Folder</div>
               <div style={{ borderRadius:'8px', overflow:'hidden', border:'1px solid rgba(255,255,255,0.07)' }}>
                 <iframe src={DRIVE_EMBED_URL} title="Camp Photos" style={{ width:'100%', height:'480px', border:'none' }} allow="autoplay"/>
               </div>
-              <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', marginTop:'12px', color:'rgba(247,246,221,0.5)', fontSize:'12px', fontFamily:"'Barlow',sans-serif", textDecoration:'none' }}>
+              <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', marginTop:'12px', color:'rgba(247,246,221,0.5)', fontSize:'12px', fontFamily:"Arial,Helvetica,sans-serif", textDecoration:'none' }}>
                 Open in Google Drive ↗
               </a>
             </div>
@@ -208,5 +208,5 @@ export const PhotosPage: React.FC = () => {
 };
 
 const inp: React.CSSProperties = { padding:'11px 13px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.08)', background:'rgba(255,255,255,0.04)', color:'#f7f6dd', fontSize:'13px', outline:'none', width:'100%', boxSizing:'border-box' };
-const primaryBtn: React.CSSProperties = { padding:'9px 18px', borderRadius:'4px', border:'none', background:'#f7f6dd', color:'#0A1128', fontSize:'11px', fontWeight:800, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' };
-const ghostBtn: React.CSSProperties = { padding:'9px 14px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'rgba(247,246,221,0.5)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' };
+const primaryBtn: React.CSSProperties = { padding:'9px 18px', borderRadius:'4px', border:'none', background:'#f7f6dd', color:'#0A1128', fontSize:'11px', fontWeight:800, cursor:'pointer', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' };
+const ghostBtn: React.CSSProperties = { padding:'9px 14px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'rgba(247,246,221,0.5)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' };

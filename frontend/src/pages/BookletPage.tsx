@@ -15,13 +15,13 @@ const CSS = `
   .bk-page { padding: 24px; max-width: 860px; }
   .bk-tabs { display: flex; gap: 6px; margin-bottom: 28px; overflow-x: auto; padding-bottom: 4px; }
   .bk-tabs::-webkit-scrollbar { display: none; }
-  .bk-tab { flex-shrink: 0; padding: 9px 16px; border-radius: 100px; border: 1px solid; font-family: 'Barlow Condensed',sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
+  .bk-tab { flex-shrink: 0; padding: 9px 16px; border-radius: 100px; border: 1px solid; font-family: 'Arial Black','Arial Bold',Gadget,sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
   .bk-session { display: flex; gap: 14px; margin-bottom: 12px; }
   .bk-session-card { flex: 1; background: #111D3E; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 13px 15px; }
   .bk-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .bk-food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
   /* Rich text display */
-  .bk-richtext { font-family: 'Barlow',sans-serif; font-size: 14px; color: rgba(247,246,221,0.7); line-height: 1.8; white-space: pre-wrap; }
+  .bk-richtext { font-family: Arial,Helvetica,sans-serif; font-size: 14px; color: rgba(247,246,221,0.7); line-height: 1.8; white-space: pre-wrap; }
   .bk-richtext strong { color: #f7f6dd; font-weight: 600; }
   @media (max-width: 640px) {
     .bk-page { padding: 16px 14px; }
@@ -171,9 +171,9 @@ export const BookletPage: React.FC = () => {
 
         {/* Header */}
         <div style={{ marginBottom: '28px' }}>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Camp</div>
-          <h1 style={{ fontFamily:"'Playfair Display',serif", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Booklet</h1>
-          <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif" }}>4 Days · 3 Nights · July 2–5, 2026</p>
+          <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Camp</div>
+          <h1 style={{ fontFamily:"'Alex Brush',cursive", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Booklet</h1>
+          <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"Arial,Helvetica,sans-serif" }}>4 Days · 3 Nights · July 2–5, 2026</p>
         </div>
         <SyncStatus visible={canEdit} />
 
@@ -200,14 +200,14 @@ export const BookletPage: React.FC = () => {
 
             {editingPacking && canEdit ? (
               <div>
-                <p style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif", marginBottom:'10px' }}>
+                <p style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"Arial,Helvetica,sans-serif", marginBottom:'10px' }}>
                   Use plain text. Start lines with • for bullet points. Use ALL CAPS for section headings.
                 </p>
                 <textarea
                   value={packingDraft}
                   onChange={(e) => setPackingDraft(e.target.value)}
                   rows={28}
-                  style={{ ...inp, resize:'vertical', fontFamily:"'Barlow',monospace", fontSize:'13px', lineHeight:1.7, marginBottom:'12px' }}
+                  style={{ ...inp, resize:'vertical', fontFamily:"Arial,monospace", fontSize:'13px', lineHeight:1.7, marginBottom:'12px' }}
                 />
                 <div style={{ display:'flex', gap:'8px' }}>
                   <button onClick={() => { setPackingListText(packingDraft); setEditingPacking(false); }} style={primaryBtn}>Save</button>
@@ -217,7 +217,7 @@ export const BookletPage: React.FC = () => {
               </div>
             ) : (
               <div style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'28px 32px' }}>
-                <pre className="bk-richtext" style={{ fontFamily:"'Barlow',sans-serif", fontSize:'14px', color:'rgba(247,246,221,0.75)', lineHeight:1.8, whiteSpace:'pre-wrap', margin:0 }}>
+                <pre className="bk-richtext" style={{ fontFamily:"Arial,Helvetica,sans-serif", fontSize:'14px', color:'rgba(247,246,221,0.75)', lineHeight:1.8, whiteSpace:'pre-wrap', margin:0 }}>
                   {packingDisplay}
                 </pre>
               </div>
@@ -230,9 +230,9 @@ export const BookletPage: React.FC = () => {
           <div>
             {/* Day hero */}
             <div style={{ background:'linear-gradient(135deg,rgba(247,246,221,0.08),rgba(74,144,217,0.06))', border:'1px solid rgba(247,246,221,0.15)', borderRadius:'8px', padding:'24px 28px', marginBottom:'24px' }}>
-              <div style={{ fontSize:'11px', letterSpacing:'0.15em', color:'rgba(247,246,221,0.6)', fontWeight:600, textTransform:'uppercase', fontFamily:"'Barlow Condensed',sans-serif", marginBottom:'6px' }}>{currentDay.date}</div>
-              <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', color:'#f7f6dd', margin:'0 0 4px', letterSpacing:'-0.01em' }}>{currentDay.theme}</h2>
-              <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"'Barlow',sans-serif", fontStyle:'italic' }}>Key Verse: {currentDay.verse}</p>
+              <div style={{ fontSize:'11px', letterSpacing:'0.15em', color:'rgba(247,246,221,0.6)', fontWeight:600, textTransform:'uppercase', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", marginBottom:'6px' }}>{currentDay.date}</div>
+              <h2 style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:900, fontSize:'28px', textTransform:'uppercase', color:'#f7f6dd', margin:'0 0 4px', letterSpacing:'-0.01em' }}>{currentDay.theme}</h2>
+              <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"Arial,Helvetica,sans-serif", fontStyle:'italic' }}>Key Verse: {currentDay.verse}</p>
             </div>
 
             {/* Sessions */}
@@ -242,7 +242,7 @@ export const BookletPage: React.FC = () => {
               return (
                 <div key={si} className="bk-session">
                   <div style={{ width:'8px', height:'8px', borderRadius:'50%', background: TYPE_COLORS[sess.type] || '#f7f6dd', marginTop:'18px', flexShrink:0, border:'2px solid #0A1128' }}/>
-                  <div style={{ minWidth:'60px', fontSize:'11px', color:'rgba(247,246,221,0.3)', paddingTop:'14px', fontFamily:"'Barlow',sans-serif" }}>{sess.time}</div>
+                  <div style={{ minWidth:'60px', fontSize:'11px', color:'rgba(247,246,221,0.3)', paddingTop:'14px', fontFamily:"Arial,Helvetica,sans-serif" }}>{sess.time}</div>
                   <div className="bk-session-card" style={{ borderLeft:`3px solid ${TYPE_COLORS[sess.type] || 'transparent'}` }}>
                     {isEditingThis && canEdit ? (
                       <div>
@@ -266,9 +266,9 @@ export const BookletPage: React.FC = () => {
                         <div>
                           <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom: sess.description ? '4px' : 0 }}>
                             <span style={{ fontSize:'16px' }}>{sess.icon}</span>
-                            <span style={{ fontSize:'14px', fontWeight:600, color:'#f7f6dd', fontFamily:"'Barlow Condensed',sans-serif" }}>{sess.title}</span>
+                            <span style={{ fontSize:'14px', fontWeight:600, color:'#f7f6dd', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif" }}>{sess.title}</span>
                           </div>
-                          {sess.description && <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', margin:'0 0 0 24px', fontFamily:"'Barlow',sans-serif" }}>{sess.description}</p>}
+                          {sess.description && <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', margin:'0 0 0 24px', fontFamily:"Arial,Helvetica,sans-serif" }}>{sess.description}</p>}
                         </div>
                         {canEdit && (
                           <button onClick={() => { setEditing({ di, si }); setDraft({}); }} style={{ ...ghostBtn, flexShrink:0, padding:'4px 10px', fontSize:'10px' }}>Edit</button>
@@ -319,14 +319,14 @@ export const BookletPage: React.FC = () => {
 
             {editingVol && canEdit ? (
               <div>
-                <p style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"'Barlow',sans-serif", marginBottom:'10px' }}>
+                <p style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"Arial,Helvetica,sans-serif", marginBottom:'10px' }}>
                   Use plain text. Use ALL CAPS for section headings. Start lines with • for bullet points.
                 </p>
                 <textarea
                   value={volDraft}
                   onChange={(e) => setVolDraft(e.target.value)}
                   rows={24}
-                  style={{ ...inp, resize:'vertical', fontFamily:"'Barlow',monospace", fontSize:'13px', lineHeight:1.7, marginBottom:'12px' }}
+                  style={{ ...inp, resize:'vertical', fontFamily:"Arial,monospace", fontSize:'13px', lineHeight:1.7, marginBottom:'12px' }}
                 />
                 <div style={{ display:'flex', gap:'8px' }}>
                   <button onClick={() => { setVolDedicationText(volDraft); setEditingVol(false); }} style={primaryBtn}>Save</button>
@@ -336,7 +336,7 @@ export const BookletPage: React.FC = () => {
               </div>
             ) : (
               <div style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'28px 32px' }}>
-                <pre className="bk-richtext" style={{ fontFamily:"'Barlow',sans-serif", fontSize:'14px', color:'rgba(247,246,221,0.75)', lineHeight:1.8, whiteSpace:'pre-wrap', margin:0 }}>
+                <pre className="bk-richtext" style={{ fontFamily:"Arial,Helvetica,sans-serif", fontSize:'14px', color:'rgba(247,246,221,0.75)', lineHeight:1.8, whiteSpace:'pre-wrap', margin:0 }}>
                   {volDisplay}
                 </pre>
               </div>
@@ -363,13 +363,13 @@ export const BookletPage: React.FC = () => {
                     ['mapsUrl',    'Google Maps URL'],
                   ] as [keyof LodgingInfo, string][]).map(([k, label]: [keyof LodgingInfo, string]) => (
                     <div key={String(k)}>
-                      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.35)', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'4px' }}>{label}</div>
+                      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.35)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'4px' }}>{label}</div>
                       <input value={lodgingDraft[k] as string} onChange={(e) => setLodgingDraft((d: LodgingInfo) => ({ ...d, [k]: e.target.value }))} style={inp}/>
                     </div>
                   ))}
                   <div>
-                    <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.35)', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'4px' }}>Directions</div>
-                    <textarea value={lodgingDraft.directions} onChange={(e) => setLodgingDraft((d: LodgingInfo) => ({ ...d, directions: e.target.value }))} rows={4} style={{ ...inp, resize:'vertical', fontFamily:"'Barlow',sans-serif" }}/>
+                    <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.35)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'4px' }}>Directions</div>
+                    <textarea value={lodgingDraft.directions} onChange={(e) => setLodgingDraft((d: LodgingInfo) => ({ ...d, directions: e.target.value }))} rows={4} style={{ ...inp, resize:'vertical', fontFamily:"Arial,Helvetica,sans-serif" }}/>
                   </div>
                 </div>
                 <div style={{ display:'flex', gap:'8px' }}>
@@ -388,11 +388,11 @@ export const BookletPage: React.FC = () => {
                   <InfoRow key={label} icon={icon} label={label} value={value} />
                 ))}
                 <div style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'16px' }}>
-                  <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.6)', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:'8px' }}>🗺️ Directions</div>
-                  <p style={{ fontSize:'14px', color:'rgba(247,246,221,0.65)', fontFamily:"'Barlow',sans-serif", lineHeight:1.7, margin:0 }}>{lodging.directions}</p>
+                  <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.6)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:'8px' }}>🗺️ Directions</div>
+                  <p style={{ fontSize:'14px', color:'rgba(247,246,221,0.65)', fontFamily:"Arial,Helvetica,sans-serif", lineHeight:1.7, margin:0 }}>{lodging.directions}</p>
                 </div>
                 {lodging.mapsUrl && (
-                  <a href={lodging.mapsUrl} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'10px 18px', borderRadius:'4px', background:'#f7f6dd', color:'#0A1128', textDecoration:'none', fontSize:'12px', fontWeight:800, width:'fit-content', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' }}>Open in Maps ↗</a>
+                  <a href={lodging.mapsUrl} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'10px 18px', borderRadius:'4px', background:'#f7f6dd', color:'#0A1128', textDecoration:'none', fontSize:'12px', fontWeight:800, width:'fit-content', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' }}>Open in Maps ↗</a>
                 )}
               </div>
             )}
@@ -432,7 +432,7 @@ export const BookletPage: React.FC = () => {
               const labels: Record<FoodSpot['type'], string> = { meal:'🍽️ Meals', supper:'🌙 Supper', htht:'💬 HTHT Spots' };
               return (
                 <div key={type} style={{ marginBottom:'28px' }}>
-                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'12px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(247,246,221,0.6)', marginBottom:'12px' }}>{labels[type]}</div>
+                  <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'12px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(247,246,221,0.6)', marginBottom:'12px' }}>{labels[type]}</div>
                   <div className="bk-food-grid">
                     {spots.map((spot: FoodSpot, idx: number) => {
                       const globalIdx = foodSpots.indexOf(spot);
@@ -453,10 +453,10 @@ export const BookletPage: React.FC = () => {
                             </div>
                           ) : (
                             <div>
-                              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'16px', color:'#f7f6dd', marginBottom:'4px' }}>{spot.name}</div>
-                              <div style={{ fontSize:'12px', color:'rgba(247,246,221,0.45)', fontFamily:"'Barlow',sans-serif", marginBottom:'6px' }}>{spot.description}</div>
-                              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"'Barlow',sans-serif" }}>📍 {spot.address}</div>
-                              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"'Barlow',sans-serif", marginTop:'2px' }}>🕐 {spot.openHours}</div>
+                              <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:700, fontSize:'16px', color:'#f7f6dd', marginBottom:'4px' }}>{spot.name}</div>
+                              <div style={{ fontSize:'12px', color:'rgba(247,246,221,0.45)', fontFamily:"Arial,Helvetica,sans-serif", marginBottom:'6px' }}>{spot.description}</div>
+                              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"Arial,Helvetica,sans-serif" }}>📍 {spot.address}</div>
+                              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"Arial,Helvetica,sans-serif", marginTop:'2px' }}>🕐 {spot.openHours}</div>
                               {canEdit && (
                                 <button onClick={() => { setEditFood(globalIdx); setFoodDraft({ ...spot }); }} style={{ ...ghostBtn, marginTop:'10px', padding:'5px 12px', fontSize:'10px' }}>Edit</button>
                               )}
@@ -465,7 +465,7 @@ export const BookletPage: React.FC = () => {
                         </div>
                       );
                     })}
-                    {spots.length === 0 && <p style={{ color:'rgba(247,246,221,0.2)', fontSize:'13px', fontFamily:"'Barlow',sans-serif" }}>No spots listed yet.</p>}
+                    {spots.length === 0 && <p style={{ color:'rgba(247,246,221,0.2)', fontSize:'13px', fontFamily:"Arial,Helvetica,sans-serif" }}>No spots listed yet.</p>}
                   </div>
                 </div>
               );
@@ -479,14 +479,14 @@ export const BookletPage: React.FC = () => {
 
 // ── Small reusable components ─────────────────────────────────────────────────
 const SectionHeader: React.FC<{ label: string }> = ({ label }) => (
-  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'22px', textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.01em', marginBottom:'4px' }}>{label}</div>
+  <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:900, fontSize:'22px', textTransform:'uppercase', color:'#f7f6dd', letterSpacing:'-0.01em', marginBottom:'4px' }}>{label}</div>
 );
 const InfoRow: React.FC<{ icon: string; label: string; value: string }> = ({ icon, label, value }) => (
   <div style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'14px 16px', display:'flex', gap:'12px', alignItems:'flex-start' }}>
     <span style={{ fontSize:'18px', flexShrink:0 }}>{icon}</span>
     <div>
-      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.6)', fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:'3px' }}>{label}</div>
-      <div style={{ fontSize:'14px', color:'rgba(247,246,221,0.7)', fontFamily:"'Barlow',sans-serif" }}>{value}</div>
+      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.6)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:'3px' }}>{label}</div>
+      <div style={{ fontSize:'14px', color:'rgba(247,246,221,0.7)', fontFamily:"Arial,Helvetica,sans-serif" }}>{value}</div>
     </div>
   </div>
 );
@@ -501,15 +501,15 @@ const inp: React.CSSProperties = {
 const primaryBtn: React.CSSProperties = {
   padding:'9px 18px', borderRadius:'4px', border:'none',
   background:'#f7f6dd', color:'#0A1128', fontSize:'11px', fontWeight:800, cursor:'pointer',
-  fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase',
+  fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase',
 };
 const ghostBtn: React.CSSProperties = {
   padding:'9px 14px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)',
   background:'transparent', color:'rgba(247,246,221,0.5)', fontSize:'11px', fontWeight:700, cursor:'pointer',
-  fontFamily:"'Barlow Condensed',sans-serif", letterSpacing:'0.08em', textTransform:'uppercase',
+  fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.08em', textTransform:'uppercase',
 };
 const dangerBtn: React.CSSProperties = {
   padding:'9px 12px', borderRadius:'4px', border:'1px solid rgba(220,80,80,0.3)',
   background:'transparent', color:'rgba(220,80,80,0.6)', fontSize:'11px', fontWeight:700, cursor:'pointer',
-  fontFamily:"'Barlow Condensed',sans-serif",
+  fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif",
 };

@@ -23,9 +23,9 @@ const GLOBAL_CSS = `
     --yellow:#f7f6dd; --yellow-bright:#E8F400; --yellow-dim:rgba(247,246,221,0.15);
     --blue-mid:#2B4BA0; --blue-sky:#4A90D9; --green-field:#5A8A3C;
     --white-soft:#f7f6dd; --gold:#f7f6dd;
-    --font-display:'Barlow Condensed','Impact',sans-serif;
-    --font-script:'Playfair Display','Georgia',serif;
-    --font-body:'Barlow',system-ui,sans-serif;
+    --font-display:'arial black regular','Impact',sans-serif;
+    --font-script:'alex brush regular','Georgia',serif;
+    --font-body:'arial black regular',system-ui,sans-serif;
   }
   html,body,#root { height:100%; min-height:100vh; }
   body { background:var(--bg-primary); color:var(--text-primary); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }

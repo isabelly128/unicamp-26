@@ -15,7 +15,7 @@ export const SyncStatus: React.FC<{ visible?: boolean }> = ({ visible = true }) 
       border: '1px solid rgba(220,80,80,0.25)',
       borderRadius: '6px',
       color: '#e07070',
-      fontFamily: "'Barlow',sans-serif",
+      fontFamily: "'arial black regular',sans-serif",
       fontSize: '12px',
       lineHeight: 1.5,
       marginBottom: '18px',
