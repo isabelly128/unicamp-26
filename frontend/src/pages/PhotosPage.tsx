@@ -3,6 +3,8 @@ import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 import type { PhotoAlbum } from '../stores/communityStore';
 import { DRIVE_FOLDER_URL, DRIVE_EMBED_URL } from '../services/googlePhotos';
+import { SyncStatus } from '../components/SyncStatus';
+import { uploadCampPhoto } from '../services/campPhotoStorageApi';
 
 const CSS = `
   .photos-page { padding: 24px; max-width: 960px; }
@@ -18,15 +20,6 @@ const CSS = `
   }
 `;
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 export const PhotosPage: React.FC = () => {
   const { hasRole }                                                                              = useAuthStore();
   const { photoAlbums, photosPublic, setPhotosPublic, addPhotoAlbum,
@@ -38,6 +31,8 @@ export const PhotosPage: React.FC = () => {
   const [showAdd,  setShowAdd]  = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newUrl,   setNewUrl]   = useState('');
+  const [coverUploading, setCoverUploading] = useState<string | null>(null);
+  const [photoUploadError, setPhotoUploadError] = useState<string | null>(null);
 
   // Per-album cover file refs
   const coverRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -45,9 +40,18 @@ export const PhotosPage: React.FC = () => {
   const handleCoverFile = async (albumId: string, e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const dataUrl = await fileToDataUrl(file);
-    updatePhotoAlbumCover(albumId, dataUrl);
-    e.target.value = '';
+    setCoverUploading(albumId);
+    setPhotoUploadError(null);
+
+    try {
+      const { url } = await uploadCampPhoto(file, 'album-cover', `album-${albumId}`);
+      updatePhotoAlbumCover(albumId, url);
+    } catch (error) {
+      setPhotoUploadError(error instanceof Error ? error.message : 'Unable to upload cover photo.');
+    } finally {
+      setCoverUploading(null);
+      e.target.value = '';
+    }
   };
 
   const handleAdd = (): void => {
@@ -60,6 +64,10 @@ export const PhotosPage: React.FC = () => {
     <>
       <style>{CSS}</style>
       <div className="photos-page">
+        <SyncStatus visible={canManage} />
+        {canManage && photoUploadError && (
+          <div style={uploadErrorStyle}>{photoUploadError}</div>
+        )}
 
         {/* Header */}
         <div className="photos-header">
@@ -134,7 +142,7 @@ export const PhotosPage: React.FC = () => {
                     <input
                       ref={(el) => { coverRefs.current[album.id] = el; }}
                       type="file"
-                      accept="image/png,image/jpeg,image/jpg"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
                       style={{ display:'none' }}
                       onChange={(e) => handleCoverFile(album.id, e)}
                     />
@@ -155,6 +163,7 @@ export const PhotosPage: React.FC = () => {
                       <button
                         className="album-cover-btn"
                         onClick={() => coverRefs.current[album.id]?.click()}
+                        disabled={coverUploading === album.id}
                         style={{
                           position:'absolute', bottom:'8px', right:'8px',
                           padding:'5px 12px', borderRadius:'4px',
@@ -208,5 +217,6 @@ export const PhotosPage: React.FC = () => {
 };
 
 const inp: React.CSSProperties = { padding:'11px 13px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.08)', background:'rgba(255,255,255,0.04)', color:'#f7f6dd', fontSize:'13px', outline:'none', width:'100%', boxSizing:'border-box' };
+const uploadErrorStyle: React.CSSProperties = { background:'rgba(220,80,80,0.08)', border:'1px solid rgba(220,80,80,0.25)', borderRadius:'6px', color:'#e07070', fontFamily:"Arial,Helvetica,sans-serif", fontSize:'12px', lineHeight:1.5, marginBottom:'18px', padding:'10px 12px' };
 const primaryBtn: React.CSSProperties = { padding:'9px 18px', borderRadius:'4px', border:'none', background:'#f7f6dd', color:'#0A1128', fontSize:'11px', fontWeight:800, cursor:'pointer', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase' };
 const ghostBtn: React.CSSProperties = { padding:'9px 14px', borderRadius:'4px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'rgba(247,246,221,0.5)', fontSize:'11px', fontWeight:700, cursor:'pointer', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.08em', textTransform:'uppercase' };

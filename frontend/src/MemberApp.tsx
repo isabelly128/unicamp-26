@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MemberNavbar } from './components/Navigation/MemberNavbar';
 import { useDevotionStore } from './stores/devotionStore';
+import { useCommunityStore } from './stores/communityStore';
 
 import { HomePage }       from './pages/HomePage';
 import { BookletPage }    from './pages/BookletPage';
@@ -38,10 +39,15 @@ const GLOBAL_CSS = `
 
 export const MemberApp: React.FC = () => {
   const loadCampContent = useDevotionStore((state) => state.loadCampContent);
+  const loadCommunityContent = useCommunityStore((state) => state.loadCommunityContent);
 
   useEffect(() => {
     void loadCampContent();
   }, [loadCampContent]);
+
+  useEffect(() => {
+    void loadCommunityContent();
+  }, [loadCommunityContent]);
 
   return (
     <>

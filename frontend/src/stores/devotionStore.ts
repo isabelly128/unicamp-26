@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import {
   fetchCampContent,
   saveCampContent,
-  type CampContentPayload,
+  type CampContentUpdate,
 } from '../services/campContentApi';
 
 // ── Type definitions ──────────────────────────────────────────────────────────
@@ -206,7 +206,7 @@ const INITIAL_SERMONS: SermonNote[] = [
   },
 ];
 
-const contentFromState = (state: DevotionState): CampContentPayload => ({
+const contentFromState = (state: DevotionState): CampContentUpdate => ({
   devotions: state.devotions,
   sermonNotes: state.sermonNotes,
   packingListText: state.packingListText,
@@ -216,7 +216,7 @@ const contentFromState = (state: DevotionState): CampContentPayload => ({
   foodSpots: state.foodSpots,
 });
 
-const withDefaults = (content: Partial<CampContentPayload>): CampContentPayload => ({
+const withDefaults = (content: CampContentUpdate) => ({
   devotions: content.devotions ?? INITIAL_DEVOTIONS,
   sermonNotes: content.sermonNotes ?? INITIAL_SERMONS,
   packingListText: content.packingListText ?? '',

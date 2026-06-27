@@ -1,4 +1,5 @@
 import type { CampDay, Devotion, FoodSpot, LodgingInfo, SermonNote } from '../stores/devotionStore';
+import type { CardImageMap, PhotoAlbum, SectionPhotoMap } from '../stores/communityStore';
 import { getSupabaseAccessToken, getSupabaseAnonKey, getSupabaseUrl } from './staffAuthApi';
 
 export interface CampContentPayload {
@@ -9,10 +10,17 @@ export interface CampContentPayload {
   schedule: CampDay[];
   lodging: LodgingInfo;
   foodSpots: FoodSpot[];
+  photoAlbums: PhotoAlbum[];
+  photosPublic: boolean;
+  heroBgUrl: string;
+  cardImages: CardImageMap;
+  sectionPhotos: SectionPhotoMap;
 }
 
+export type CampContentUpdate = Partial<CampContentPayload>;
+
 interface CampContentResponse {
-  content: CampContentPayload | null;
+  content: CampContentUpdate | null;
   updatedAt?: string | null;
   updatedBy?: string | null;
   error?: string;
@@ -27,7 +35,7 @@ const parseError = async (response: Response): Promise<string> => {
   }
 };
 
-export const fetchCampContent = async (): Promise<CampContentPayload | null> => {
+export const fetchCampContent = async (): Promise<CampContentUpdate | null> => {
   const supabaseUrl = getSupabaseUrl();
   const supabaseKey = getSupabaseAnonKey();
   const response = await fetch(
@@ -49,7 +57,7 @@ export const fetchCampContent = async (): Promise<CampContentPayload | null> => 
   return rows[0]?.content || null;
 };
 
-export const saveCampContent = async (content: CampContentPayload): Promise<void> => {
+export const saveCampContent = async (content: CampContentUpdate): Promise<void> => {
   const supabaseUrl = getSupabaseUrl();
   const supabaseKey = getSupabaseAnonKey();
   const accessToken = await getSupabaseAccessToken();
@@ -57,6 +65,12 @@ export const saveCampContent = async (content: CampContentPayload): Promise<void
   if (!accessToken) {
     throw new Error('Staff login required');
   }
+
+  const existingContent = await fetchCampContent();
+  const mergedContent: CampContentUpdate = {
+    ...(existingContent ?? {}),
+    ...content,
+  };
 
   const response = await fetch(`${supabaseUrl}/rest/v1/camp_content?on_conflict=id`, {
     method: 'POST',
@@ -68,7 +82,7 @@ export const saveCampContent = async (content: CampContentPayload): Promise<void
     },
     body: JSON.stringify({
       id: 'unicamp-2026',
-      content,
+      content: mergedContent,
       updated_by: 'staff',
       updated_at: new Date().toISOString(),
     }),
