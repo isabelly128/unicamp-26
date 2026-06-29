@@ -42,6 +42,7 @@ export interface PrayerRequest {
   submittedAt: string;
   isAnonymous: boolean;
   status: 'pending' | 'prayed';
+  name?: string;
 }
 
 export interface Conviction {

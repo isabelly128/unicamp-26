@@ -1,87 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { useCommunityStore } from '../stores/communityStore';
 import { MEMBER_USER } from '../stores/authStore';
-import { supabase } from '../services/supabase';
-
-interface PrayerRequest {
-  id: string;
-  content: string;
-  submitted_by: string;
-  is_anonymous: boolean;
-  status: 'pending' | 'prayed';
-  submitted_at: string;
-}
+import type { PrayerRequest } from '../stores/communityStore';
 
 export const PrayerPage: React.FC = () => {
-  const { user, hasRole }               = useAuthStore();
-  const [content, setContent]           = useState<string>('');
-  const [isAnonymous, setIsAnonymous]   = useState<boolean>(false);
-  const [showPopup, setShowPopup]       = useState<boolean>(false);
-  const [requests, setRequests]         = useState<PrayerRequest[]>([]);
-  const [loading, setLoading]           = useState<boolean>(true);
-  const [submitting, setSubmitting]     = useState<boolean>(false);
+  const { user, hasRole } = useAuthStore();
+  const { prayerRequests, submitPrayerRequest, markPrayed } = useCommunityStore();
 
-  const isPastoral    = hasRole(['pastoral']);
+  const [content, setContent] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+
+  const isPastoral = hasRole(['pastoral']);
   const effectiveUser = user ?? MEMBER_USER;
 
-  // ── Load requests from Supabase on mount ────────────────────────────────────
-  useEffect(() => {
-    void loadRequests();
-  }, []);
+  const handleSubmit = (): void => {
+    if (!content.trim()) return;
 
-  const loadRequests = async (): Promise<void> => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('prayer_requests')
-      .select('*')
-      .order('submitted_at', { ascending: false });
-
-    if (!error && data) setRequests(data as PrayerRequest[]);
-    setLoading(false);
+    const submittedName = isAnonymous ? undefined : name.trim() || undefined;
+    submitPrayerRequest(content.trim(), effectiveUser.id, isAnonymous, submittedName);
+    setContent('');
+    setName('');
+    setIsAnonymous(false);
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 3500);
   };
 
-  // ── Submit a new request ─────────────────────────────────────────────────────
-  const handleSubmit = async (): Promise<void> => {
-    if (!content.trim() || submitting) return;
-    setSubmitting(true);
+  const visibleRequests: PrayerRequest[] = isPastoral
+    ? prayerRequests
+    : prayerRequests.filter((r) => r.submittedBy === effectiveUser.id);
 
-    const { error } = await supabase.from('prayer_requests').insert({
-      content:      content.trim(),
-      submitted_by: isAnonymous ? 'anonymous' : (effectiveUser.name || effectiveUser.id),
-      is_anonymous: isAnonymous,
-      status:       'pending',
-      submitted_at: new Date().toISOString(),
-    });
-
-    if (error) {
-      console.error('Prayer request submit failed:', error.message);
-      alert('Failed to submit. Please try again.');
-    } else {
-      setContent('');
-      setIsAnonymous(false);
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 3500);
-      void loadRequests(); // refresh list
-    }
-    setSubmitting(false);
+  const requestName = (request: PrayerRequest): string => {
+    if (request.isAnonymous) return 'Anonymous';
+    return request.name || (request.submittedBy === MEMBER_USER.id ? 'Camper' : request.submittedBy);
   };
-
-  // ── Mark prayed ──────────────────────────────────────────────────────────────
-  const handleMarkPrayed = async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('prayer_requests')
-      .update({ status: 'prayed' })
-      .eq('id', id);
-
-    if (!error) void loadRequests();
-  };
-
-  const visibleRequests = isPastoral
-    ? requests
-    : requests.filter((r) =>
-        r.submitted_by === effectiveUser.id ||
-        r.submitted_by === (effectiveUser.name || effectiveUser.id)
-      );
 
   return (
     <div style={{ padding: '40px', maxWidth: '800px', position: 'relative' }}>
@@ -137,6 +91,26 @@ export const PrayerPage: React.FC = () => {
         <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'14px' }}>
           Submit a Prayer Request
         </div>
+
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name (optional)"
+          disabled={isAnonymous}
+          maxLength={120}
+          aria-label="Name"
+          style={{
+            width:'100%', padding:'12px 16px', borderRadius:'4px',
+            border:'1px solid rgba(255,255,255,0.08)',
+            background: isAnonymous ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.04)',
+            color:'#f7f6dd', opacity: isAnonymous ? 0.5 : 1,
+            fontSize:'14px', outline:'none',
+            fontFamily:'Arial,Helvetica,sans-serif',
+            boxSizing:'border-box', marginBottom:'12px',
+          }}
+        />
+
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -151,25 +125,34 @@ export const PrayerPage: React.FC = () => {
             boxSizing:'border-box', marginBottom:'14px',
           }}
         />
+
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'12px' }}>
           <label style={{ display:'flex', alignItems:'center', gap:'8px', fontSize:'13px', color:'rgba(247,246,221,0.4)', cursor:'pointer', fontFamily:'Arial,Helvetica,sans-serif' }}>
-            <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} style={{ accentColor:'#f7f6dd' }}/>
+            <input
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={(e) => {
+                setIsAnonymous(e.target.checked);
+                if (e.target.checked) setName('');
+              }}
+              style={{ accentColor:'#f7f6dd' }}
+            />
             Submit anonymously
           </label>
           <button
             onClick={handleSubmit}
-            disabled={!content.trim() || submitting}
+            disabled={!content.trim()}
             style={{
               padding:'11px 24px', borderRadius:'4px', border:'none',
-              background: content.trim() && !submitting ? '#f7f6dd' : 'rgba(255,255,255,0.06)',
-              color: content.trim() && !submitting ? '#0A1128' : 'rgba(247,246,221,0.2)',
+              background: content.trim() ? '#f7f6dd' : 'rgba(255,255,255,0.06)',
+              color: content.trim() ? '#0A1128' : 'rgba(247,246,221,0.2)',
               fontSize:'12px', fontWeight:800,
-              cursor: content.trim() && !submitting ? 'pointer' : 'not-allowed',
+              cursor: content.trim() ? 'pointer' : 'not-allowed',
               fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif",
               letterSpacing:'0.12em', textTransform:'uppercase', transition:'background 0.15s',
             }}
           >
-            {submitting ? 'Sending…' : 'Send Request →'}
+            Send Request →
           </button>
         </div>
       </div>
@@ -178,13 +161,12 @@ export const PrayerPage: React.FC = () => {
       {isPastoral && (
         <div>
           <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'13px', letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(247,246,221,0.5)', marginBottom:'16px' }}>
-            All Prayer Requests ({requests.length})
+            All Prayer Requests ({prayerRequests.length})
           </div>
-          {loading && <p style={{ color:'rgba(247,246,221,0.3)', fontSize:'13px', fontFamily:'Arial,Helvetica,sans-serif' }}>Loading…</p>}
-          {!loading && visibleRequests.length === 0 && (
+          {visibleRequests.length === 0 && (
             <p style={{ color:'rgba(247,246,221,0.3)', fontSize:'13px', fontFamily:'Arial,Helvetica,sans-serif' }}>No requests yet.</p>
           )}
-          {visibleRequests.map((req) => (
+          {visibleRequests.map((req: PrayerRequest) => (
             <div key={req.id} style={{
               background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)',
               borderRadius:'8px', padding:'18px', marginBottom:'10px',
@@ -196,12 +178,12 @@ export const PrayerPage: React.FC = () => {
               </p>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'8px' }}>
                 <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:'Arial,Helvetica,sans-serif' }}>
-                  {req.is_anonymous ? 'Anonymous' : req.submitted_by}
+                  {requestName(req)}
                   {' · '}
-                  {new Date(req.submitted_at).toLocaleDateString()}
+                  {new Date(req.submittedAt).toLocaleDateString()}
                 </div>
                 {req.status === 'pending' ? (
-                  <button onClick={() => handleMarkPrayed(req.id)} style={{
+                  <button onClick={() => markPrayed(req.id)} style={{
                     padding:'6px 14px', borderRadius:'4px',
                     border:'1px solid rgba(139,195,74,0.3)',
                     background:'rgba(139,195,74,0.08)', color:'#8BC34A',

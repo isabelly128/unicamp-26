@@ -58,8 +58,10 @@ export const App: React.FC = () => {
   }, [loadCampContent]);
 
   useEffect(() => {
-    void loadCommunityContent();
-  }, [loadCommunityContent]);
+    if (isSessionVerified) {
+      void loadCommunityContent();
+    }
+  }, [isAuthenticated, isSessionVerified, loadCommunityContent]);
 
   useEffect(() => {
     if (!isSessionVerified) {

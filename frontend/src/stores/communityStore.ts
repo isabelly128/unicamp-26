@@ -5,11 +5,21 @@ import {
   saveCampContent,
   type CampContentUpdate,
 } from '../services/campContentApi';
+import {
+  createConviction,
+  createPrayerRequest,
+  createThanksgiving,
+  deleteConviction,
+  fetchCommunityWall,
+  updateConvictionApproval,
+  updatePrayerRequestStatus,
+} from '../services/communityWallApi';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export interface PrayerRequest {
   id: string; content: string; submittedBy: string;
   submittedAt: string; isAnonymous: boolean; status: 'pending' | 'prayed';
+  name?: string;
 }
 export interface Conviction {
   id: string; content: string; submittedAt: string;
@@ -48,7 +58,7 @@ interface CommunityState {
 
   loadCommunityContent: () => Promise<void>;
   syncCommunityContent: () => Promise<void>;
-  submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean) => void;
+  submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean, name?: string) => void;
   markPrayed:          (id: string) => void;
   submitConviction:    (content: string) => void;
   approveConviction:   (id: string, approvedBy: string) => void;
@@ -92,11 +102,35 @@ const withDefaults = (content: CampContentUpdate) => ({
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : 'Unable to sync camp photos';
 
+const makeId = (prefix: string): string => {
+  const randomId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  return `${prefix}-${randomId}`;
+};
+
 export const useCommunityStore = create<CommunityState>()(
   persist(
     (set, get) => {
       const syncAfterSet = (): void => {
         void get().syncCommunityContent();
+      };
+      const persistWallChange = (operation: () => Promise<void>): void => {
+        void operation()
+          .then(() => {
+            set({
+              remoteStatus: 'synced',
+              remoteError: null,
+              lastSyncedAt: new Date().toISOString(),
+            });
+          })
+          .catch((error) => {
+            set({
+              remoteStatus: 'error',
+              remoteError: errorMessage(error),
+            });
+          });
       };
 
       return ({
@@ -118,9 +152,13 @@ export const useCommunityStore = create<CommunityState>()(
         set({ remoteStatus: 'loading', remoteError: null });
 
         try {
-          const content = await fetchCampContent();
+          const [content, wallContent] = await Promise.all([
+            fetchCampContent(),
+            fetchCommunityWall(),
+          ]);
           set({
             ...(content ? withDefaults(content) : {}),
+            ...wallContent,
             remoteStatus: 'synced',
             remoteError: null,
             lastSyncedAt: new Date().toISOString(),
@@ -149,45 +187,67 @@ export const useCommunityStore = create<CommunityState>()(
         }
       },
 
-      submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean) => {
+      submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean, name?: string) => {
         const req: PrayerRequest = {
-          id: `pr${Date.now()}`, content, submittedBy: userId,
+          id: makeId('pr'), content, submittedBy: userId,
           submittedAt: new Date().toISOString(), isAnonymous, status: 'pending',
+          name,
         };
-        set((s: CommunityState) => ({ prayerRequests: [...s.prayerRequests, req] }));
+        set((s: CommunityState) => ({
+          prayerRequests: [req, ...s.prayerRequests],
+          remoteStatus: 'loading',
+          remoteError: null,
+        }));
+        persistWallChange(() => createPrayerRequest(req));
       },
 
       markPrayed: (id: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           prayerRequests: s.prayerRequests.map((r: PrayerRequest) =>
             r.id === id ? { ...r, status: 'prayed' as const } : r),
-        })),
+          remoteStatus: 'loading',
+          remoteError: null,
+        })); persistWallChange(() => updatePrayerRequestStatus(id, 'prayed')); },
 
       submitConviction: (content: string) => {
         const c: Conviction = {
-          id: `c${Date.now()}`, content,
+          id: makeId('c'), content,
           submittedAt: new Date().toISOString(), approved: false,
         };
-        set((s: CommunityState) => ({ convictions: [...s.convictions, c] }));
+        set((s: CommunityState) => ({
+          convictions: [c, ...s.convictions],
+          remoteStatus: 'loading',
+          remoteError: null,
+        }));
+        persistWallChange(() => createConviction(c));
       },
 
       approveConviction: (id: string, approvedBy: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           convictions: s.convictions.map((c: Conviction) =>
             c.id === id ? { ...c, approved: true, approvedBy } : c),
-        })),
+          remoteStatus: 'loading',
+          remoteError: null,
+        })); persistWallChange(() => updateConvictionApproval(id, approvedBy)); },
 
       rejectConviction: (id: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           convictions: s.convictions.filter((c: Conviction) => c.id !== id),
-        })),
+          remoteStatus: 'loading',
+          remoteError: null,
+        })); persistWallChange(() => deleteConviction(id)); },
 
       submitThanksgiving: (content: string, userId: string, isAnonymous: boolean) => {
         const t: Thanksgiving = {
-          id: `t${Date.now()}`, content, submittedBy: userId,
+          id: makeId('t'), content, submittedBy: userId,
           submittedAt: new Date().toISOString(), isAnonymous,
         };
-        set((s: CommunityState) => ({ thanksgivings: [...s.thanksgivings, t] }));
+        set((s: CommunityState) => ({
+          thanksgivings: [t, ...s.thanksgivings],
+          remoteStatus: 'loading',
+          remoteError: null,
+        }));
+        persistWallChange(() => createThanksgiving(t));
       },
 
       addPhotoAlbum: (album: Omit<PhotoAlbum, 'id'>) => {

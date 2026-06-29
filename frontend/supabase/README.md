@@ -6,6 +6,12 @@ Run `camp_photo_storage.sql` once too. It creates/updates the public `camp-photo
 and adds RLS policies so only authenticated `admin@camp.sg` and `comms@camp.sg` users can upload,
 replace, or delete images.
 
+Run `community_wall.sql` once as well. It creates persistent tables for the prayer wall,
+convictions, and thanksgivings. Public visitors can submit, approved testimony content is public,
+and prayer requests/pending convictions are only visible to `admin@camp.sg` and `pastoral@camp.sg`.
+Rerun it after updates; it is safe to rerun and will add new columns such as the optional prayer
+request name field.
+
 Set these environment variables locally and in Vercel:
 
 ```text
@@ -20,6 +26,8 @@ Create a Supabase Auth user for the staff login:
 Email: admin@camp.sg
 Password: admin2026
 ```
+
+Create `pastoral@camp.sg` too if pastoral leaders need to review prayer requests and convictions.
 
 Run `camp_content.sql` after creating the table so RLS allows public reads and staff writes.
 
