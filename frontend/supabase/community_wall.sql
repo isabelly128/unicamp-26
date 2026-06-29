@@ -33,18 +33,52 @@ end $$;
 create table if not exists public.community_convictions (
   id text primary key default gen_random_uuid()::text,
   content text not null check (char_length(trim(content)) between 1 and 2000),
+  name text check (name is null or char_length(trim(name)) between 1 and 120),
   submitted_at timestamptz not null default now(),
   approved boolean not null default false,
   approved_by text
 );
 
+alter table public.community_convictions
+  add column if not exists name text;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'community_convictions_name_length'
+  ) then
+    alter table public.community_convictions
+      add constraint community_convictions_name_length
+      check (name is null or char_length(trim(name)) between 1 and 120);
+  end if;
+end $$;
+
 create table if not exists public.community_thanksgivings (
   id text primary key default gen_random_uuid()::text,
   content text not null check (char_length(trim(content)) between 1 and 2000),
+  name text check (name is null or char_length(trim(name)) between 1 and 120),
   submitted_by text not null default 'member-public',
   submitted_at timestamptz not null default now(),
   is_anonymous boolean not null default true
 );
+
+alter table public.community_thanksgivings
+  add column if not exists name text;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'community_thanksgivings_name_length'
+  ) then
+    alter table public.community_thanksgivings
+      add constraint community_thanksgivings_name_length
+      check (name is null or char_length(trim(name)) between 1 and 120);
+  end if;
+end $$;
 
 create index if not exists community_prayer_requests_submitted_at_idx
   on public.community_prayer_requests (submitted_at desc);

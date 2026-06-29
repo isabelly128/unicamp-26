@@ -10,7 +10,7 @@ Run `community_wall.sql` once as well. It creates persistent tables for the pray
 convictions, and thanksgivings. Public visitors can submit, approved testimony content is public,
 and prayer requests/pending convictions are only visible to `admin@camp.sg` and `pastoral@camp.sg`.
 Rerun it after updates; it is safe to rerun and will add new columns such as the optional prayer
-request name field.
+and testimony request name fields.
 
 Set these environment variables locally and in Vercel:
 

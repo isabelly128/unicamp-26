@@ -23,11 +23,11 @@ export interface PrayerRequest {
 }
 export interface Conviction {
   id: string; content: string; submittedAt: string;
-  approved: boolean; approvedBy?: string;
+  approved: boolean; approvedBy?: string; name?: string;
 }
 export interface Thanksgiving {
   id: string; content: string; submittedBy: string;
-  submittedAt: string; isAnonymous: boolean;
+  submittedAt: string; isAnonymous: boolean; name?: string;
 }
 export interface PhotoAlbum {
   id: string; title: string; googlePhotosUrl: string;
@@ -58,12 +58,12 @@ interface CommunityState {
 
   loadCommunityContent: () => Promise<void>;
   syncCommunityContent: () => Promise<void>;
-  submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean, name?: string) => void;
+  submitPrayerRequest: (content: string, userId: string, name?: string) => void;
   markPrayed:          (id: string) => void;
-  submitConviction:    (content: string) => void;
+  submitConviction:    (content: string, name?: string) => void;
   approveConviction:   (id: string, approvedBy: string) => void;
   rejectConviction:    (id: string) => void;
-  submitThanksgiving:  (content: string, userId: string, isAnonymous: boolean) => void;
+  submitThanksgiving:  (content: string, userId: string, name?: string) => void;
   addPhotoAlbum:       (album: Omit<PhotoAlbum, 'id'>) => void;
   removePhotoAlbum:      (id: string) => void;
   updatePhotoAlbumCover: (id: string, coverUrl: string) => void;
@@ -187,11 +187,12 @@ export const useCommunityStore = create<CommunityState>()(
         }
       },
 
-      submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean, name?: string) => {
+      submitPrayerRequest: (content: string, userId: string, name?: string) => {
+        const submittedName = name?.trim() || undefined;
         const req: PrayerRequest = {
           id: makeId('pr'), content, submittedBy: userId,
-          submittedAt: new Date().toISOString(), isAnonymous, status: 'pending',
-          name,
+          submittedAt: new Date().toISOString(), isAnonymous: !submittedName, status: 'pending',
+          name: submittedName,
         };
         set((s: CommunityState) => ({
           prayerRequests: [req, ...s.prayerRequests],
@@ -209,10 +210,12 @@ export const useCommunityStore = create<CommunityState>()(
           remoteError: null,
         })); persistWallChange(() => updatePrayerRequestStatus(id, 'prayed')); },
 
-      submitConviction: (content: string) => {
+      submitConviction: (content: string, name?: string) => {
+        const submittedName = name?.trim() || undefined;
         const c: Conviction = {
           id: makeId('c'), content,
           submittedAt: new Date().toISOString(), approved: false,
+          name: submittedName,
         };
         set((s: CommunityState) => ({
           convictions: [c, ...s.convictions],
@@ -237,10 +240,12 @@ export const useCommunityStore = create<CommunityState>()(
           remoteError: null,
         })); persistWallChange(() => deleteConviction(id)); },
 
-      submitThanksgiving: (content: string, userId: string, isAnonymous: boolean) => {
+      submitThanksgiving: (content: string, userId: string, name?: string) => {
+        const submittedName = name?.trim() || undefined;
         const t: Thanksgiving = {
           id: makeId('t'), content, submittedBy: userId,
-          submittedAt: new Date().toISOString(), isAnonymous,
+          submittedAt: new Date().toISOString(), isAnonymous: !submittedName,
+          name: submittedName,
         };
         set((s: CommunityState) => ({
           thanksgivings: [t, ...s.thanksgivings],

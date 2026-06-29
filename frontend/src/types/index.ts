@@ -51,6 +51,7 @@ export interface Conviction {
   submittedAt: string;
   approved: boolean;
   approvedBy?: string;
+  name?: string;
 }
 
 export interface Thanksgiving {
@@ -59,6 +60,7 @@ export interface Thanksgiving {
   submittedBy: string;
   submittedAt: string;
   isAnonymous: boolean;
+  name?: string;
 }
 
 export interface PhotoAlbum {
