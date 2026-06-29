@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
 import { useDevotionStore } from './stores/devotionStore';
+import { useCommunityStore } from './stores/communityStore';
 
 import { Navbar }          from './components/Navigation/Navbar';
 import { ProtectedRoute }  from './components/Auth/ProtectedRoute';
@@ -50,10 +51,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 export const App: React.FC = () => {
   const { isAuthenticated, isSessionVerified, validateSession } = useAuthStore();
   const loadCampContent = useDevotionStore((state) => state.loadCampContent);
+  const loadCommunityContent = useCommunityStore((state) => state.loadCommunityContent);
 
   useEffect(() => {
     void loadCampContent();
   }, [loadCampContent]);
+
+  useEffect(() => {
+    void loadCommunityContent();
+  }, [loadCommunityContent]);
 
   useEffect(() => {
     if (!isSessionVerified) {

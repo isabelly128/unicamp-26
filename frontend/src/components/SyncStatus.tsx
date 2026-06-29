@@ -1,13 +1,22 @@
 import React from 'react';
 import { useDevotionStore } from '../stores/devotionStore';
+import { useCommunityStore } from '../stores/communityStore';
 
 export const SyncStatus: React.FC<{ visible?: boolean }> = ({ visible = true }) => {
-  const { remoteStatus, remoteError } = useDevotionStore((state) => ({
+  const devotionSync = useDevotionStore((state) => ({
     remoteStatus: state.remoteStatus,
     remoteError: state.remoteError,
   }));
+  const communitySync = useCommunityStore((state) => ({
+    remoteStatus: state.remoteStatus,
+    remoteError: state.remoteError,
+  }));
+  const errors = [devotionSync, communitySync]
+    .filter((sync) => sync.remoteStatus === 'error')
+    .map((sync) => sync.remoteError)
+    .filter(Boolean);
 
-  if (!visible || remoteStatus !== 'error') return null;
+  if (!visible || errors.length === 0) return null;
 
   return (
     <div style={{
@@ -22,7 +31,7 @@ export const SyncStatus: React.FC<{ visible?: boolean }> = ({ visible = true }) 
       padding: '10px 12px',
     }}>
       Supabase sync is not available yet. Edits may stay local until the database setup is complete.
-      {remoteError ? ` ${remoteError}` : ''}
+      {errors.length ? ` ${errors.join(' ')}` : ''}
     </div>
   );
 };

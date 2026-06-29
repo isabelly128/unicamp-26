@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
+import { SyncStatus } from '../components/SyncStatus';
+import { uploadCampPhoto } from '../services/campPhotoStorageApi';
 
 const CAMP_DATES = 'July 2–5, 2026';
 const VERSE_REF  = 'Matthew 7:13-14';
@@ -79,15 +81,6 @@ const CSS = `
   }
 `;
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload  = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 export const HomePage: React.FC = () => {
   const { user, hasRole }                         = useAuthStore();
   const { heroBgUrl, setHeroBgUrl,
@@ -97,30 +90,52 @@ export const HomePage: React.FC = () => {
 
   const heroBgRef                                 = useRef<HTMLInputElement>(null);
   const [heroBgLoading, setHeroBgLoading]         = useState(false);
+  const [cardUploading, setCardUploading]         = useState<string | null>(null);
+  const [photoUploadError, setPhotoUploadError]   = useState<string | null>(null);
   const cardRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const handleHeroBgFile = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file) return;
     setHeroBgLoading(true);
-    const dataUrl = await fileToDataUrl(file);
-    setHeroBgUrl(dataUrl);
-    setHeroBgLoading(false);
-    e.target.value = '';
+    setPhotoUploadError(null);
+
+    try {
+      const { url } = await uploadCampPhoto(file, 'home-hero', 'hero-background');
+      setHeroBgUrl(url);
+    } catch (error) {
+      setPhotoUploadError(error instanceof Error ? error.message : 'Unable to upload photo.');
+    } finally {
+      setHeroBgLoading(false);
+      e.target.value = '';
+    }
   };
 
   const handleCardFile = async (path: string, e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const dataUrl = await fileToDataUrl(file);
-    setCardImage(path, dataUrl);
-    e.target.value = '';
+    setCardUploading(path);
+    setPhotoUploadError(null);
+
+    try {
+      const { url } = await uploadCampPhoto(file, 'home-card', `card-${path}`);
+      setCardImage(path, url);
+    } catch (error) {
+      setPhotoUploadError(error instanceof Error ? error.message : 'Unable to upload photo.');
+    } finally {
+      setCardUploading(null);
+      e.target.value = '';
+    }
   };
 
   return (
     <>
       <style>{CSS}</style>
       <div className="home-page">
+        <SyncStatus visible={isAdmin} />
+        {isAdmin && photoUploadError && (
+          <div style={uploadErrorStyle}>{photoUploadError}</div>
+        )}
 
         {/* ── Hero ── */}
         <div style={{
@@ -151,7 +166,7 @@ export const HomePage: React.FC = () => {
           {/* Admin hero photo upload */}
           {isAdmin && (
             <div style={{ position:'absolute', top:'24px', right:'24px', zIndex:2, display:'flex', gap:'8px', alignItems:'center' }}>
-              <input ref={heroBgRef} type="file" accept="image/png,image/jpeg,image/jpg" style={{ display:'none' }} onChange={handleHeroBgFile}/>
+              <input ref={heroBgRef} type="file" accept="image/png,image/jpeg,image/jpg,image/webp" style={{ display:'none' }} onChange={handleHeroBgFile}/>
               <button onClick={() => heroBgRef.current?.click()} disabled={heroBgLoading} style={{ padding:'6px 12px', borderRadius:'4px', border:'1px solid rgba(247,246,221,0.25)', background:'rgba(10,17,40,0.75)', color:'rgba(247,246,221,0.7)', fontSize:'10px', fontWeight:700, cursor:'pointer', fontFamily:"'arial black regular',sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', backdropFilter:'blur(4px)' }}>
                 {heroBgLoading ? 'Uploading…' : `🖼 ${heroBgUrl ? 'Change Photo' : 'Add Photo'}`}
               </button>
@@ -196,7 +211,7 @@ export const HomePage: React.FC = () => {
                   <input
                     ref={(el) => { cardRefs.current[card.path] = el; }}
                     type="file"
-                    accept="image/png,image/jpeg,image/jpg"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
                     style={{ display:'none' }}
                     onChange={(e) => handleCardFile(card.path, e)}
                   />
@@ -232,6 +247,7 @@ export const HomePage: React.FC = () => {
                   <div className="card-edit-overlay">
                     <button
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); cardRefs.current[card.path]?.click(); }}
+                      disabled={cardUploading === card.path}
                       style={{
                         padding:'4px 10px', borderRadius:'4px',
                         border:'1px solid rgba(247,246,221,0.35)',
@@ -260,4 +276,16 @@ export const HomePage: React.FC = () => {
       </div>
     </>
   );
+};
+
+const uploadErrorStyle: React.CSSProperties = {
+  background:'rgba(220,80,80,0.08)',
+  border:'1px solid rgba(220,80,80,0.25)',
+  borderRadius:'6px',
+  color:'#e07070',
+  fontFamily:"'arial black regular',sans-serif",
+  fontSize:'12px',
+  lineHeight:1.5,
+  marginBottom:'18px',
+  padding:'10px 12px',
 };

@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import {
+  fetchCampContent,
+  saveCampContent,
+  type CampContentUpdate,
+} from '../services/campContentApi';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export interface PrayerRequest {
@@ -37,7 +42,12 @@ interface CommunityState {
   heroBgUrl:      string;
   cardImages:     CardImageMap;      // homepage card backgrounds
   sectionPhotos:  SectionPhotoMap;   // booklet section photo arrays
+  remoteStatus:   'idle' | 'loading' | 'synced' | 'error';
+  remoteError:    string | null;
+  lastSyncedAt:   string | null;
 
+  loadCommunityContent: () => Promise<void>;
+  syncCommunityContent: () => Promise<void>;
   submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean) => void;
   markPrayed:          (id: string) => void;
   submitConviction:    (content: string) => void;
@@ -63,9 +73,33 @@ const INITIAL_ALBUMS: PhotoAlbum[] = [
   },
 ];
 
+const contentFromState = (state: CommunityState): CampContentUpdate => ({
+  photoAlbums: state.photoAlbums,
+  photosPublic: state.photosPublic,
+  heroBgUrl: state.heroBgUrl,
+  cardImages: state.cardImages,
+  sectionPhotos: state.sectionPhotos,
+});
+
+const withDefaults = (content: CampContentUpdate) => ({
+  photoAlbums: content.photoAlbums ?? INITIAL_ALBUMS,
+  photosPublic: content.photosPublic ?? false,
+  heroBgUrl: content.heroBgUrl ?? '',
+  cardImages: content.cardImages ?? {},
+  sectionPhotos: content.sectionPhotos ?? {},
+});
+
+const errorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : 'Unable to sync camp photos';
+
 export const useCommunityStore = create<CommunityState>()(
   persist(
-    (set) => ({
+    (set, get) => {
+      const syncAfterSet = (): void => {
+        void get().syncCommunityContent();
+      };
+
+      return ({
       prayerRequests: [],
       convictions:    [],
       thanksgivings:  [],
@@ -74,6 +108,46 @@ export const useCommunityStore = create<CommunityState>()(
       heroBgUrl:      '',
       cardImages:     {},
       sectionPhotos:  {},
+      remoteStatus:   'idle',
+      remoteError:    null,
+      lastSyncedAt:   null,
+
+      loadCommunityContent: async (): Promise<void> => {
+        if (get().remoteStatus === 'loading') return;
+
+        set({ remoteStatus: 'loading', remoteError: null });
+
+        try {
+          const content = await fetchCampContent();
+          set({
+            ...(content ? withDefaults(content) : {}),
+            remoteStatus: 'synced',
+            remoteError: null,
+            lastSyncedAt: new Date().toISOString(),
+          });
+        } catch (error) {
+          set({
+            remoteStatus: 'error',
+            remoteError: errorMessage(error),
+          });
+        }
+      },
+
+      syncCommunityContent: async (): Promise<void> => {
+        try {
+          await saveCampContent(contentFromState(get()));
+          set({
+            remoteStatus: 'synced',
+            remoteError: null,
+            lastSyncedAt: new Date().toISOString(),
+          });
+        } catch (error) {
+          set({
+            remoteStatus: 'error',
+            remoteError: errorMessage(error),
+          });
+        }
+      },
 
       submitPrayerRequest: (content: string, userId: string, isAnonymous: boolean) => {
         const req: PrayerRequest = {
@@ -119,50 +193,70 @@ export const useCommunityStore = create<CommunityState>()(
       addPhotoAlbum: (album: Omit<PhotoAlbum, 'id'>) => {
         const a: PhotoAlbum = { ...album, id: `a${Date.now()}` };
         set((s: CommunityState) => ({ photoAlbums: [...s.photoAlbums, a] }));
+        syncAfterSet();
       },
 
       updatePhotoAlbumCover: (id: string, coverUrl: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           photoAlbums: s.photoAlbums.map((a: PhotoAlbum) => a.id === id ? { ...a, coverPhotoUrl: coverUrl } : a),
-        })),
+        })); syncAfterSet(); },
       removePhotoAlbum: (id: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           photoAlbums: s.photoAlbums.filter((a: PhotoAlbum) => a.id !== id),
-        })),
+        })); syncAfterSet(); },
 
-      setPhotosPublic: (value: boolean) => set({ photosPublic: value }),
-      setHeroBgUrl:    (url: string)    => set({ heroBgUrl: url }),
+      setPhotosPublic: (value: boolean) => {
+        set({ photosPublic: value });
+        syncAfterSet();
+      },
+      setHeroBgUrl: (url: string) => {
+        set({ heroBgUrl: url });
+        syncAfterSet();
+      },
 
       setCardImage: (cardPath: string, url: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           cardImages: { ...s.cardImages, [cardPath]: url },
-        })),
+        })); syncAfterSet(); },
 
       removeCardImage: (cardPath: string) =>
-        set((s: CommunityState) => {
+        { set((s: CommunityState) => {
           const updated = { ...s.cardImages };
           delete updated[cardPath];
           return { cardImages: updated };
-        }),
+        }); syncAfterSet(); },
 
       addSectionPhoto: (sectionKey: string, url: string) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           sectionPhotos: {
             ...s.sectionPhotos,
             [sectionKey]: [...(s.sectionPhotos[sectionKey] ?? []), url],
           },
-        })),
+        })); syncAfterSet(); },
 
       removeSectionPhoto: (sectionKey: string, index: number) =>
-        set((s: CommunityState) => ({
+        { set((s: CommunityState) => ({
           sectionPhotos: {
             ...s.sectionPhotos,
             [sectionKey]: (s.sectionPhotos[sectionKey] ?? []).filter(
               (_: string, i: number) => i !== index
             ),
           },
-        })),
-    }),
-    { name: 'community-store' }
+        })); syncAfterSet(); },
+    });
+    },
+    {
+      name: 'community-store',
+      partialize: (state) => ({
+        prayerRequests: state.prayerRequests,
+        convictions: state.convictions,
+        thanksgivings: state.thanksgivings,
+        photoAlbums: state.photoAlbums,
+        photosPublic: state.photosPublic,
+        heroBgUrl: state.heroBgUrl,
+        cardImages: state.cardImages,
+        sectionPhotos: state.sectionPhotos,
+      }),
+    }
   )
 );
