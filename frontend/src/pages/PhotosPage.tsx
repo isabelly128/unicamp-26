@@ -3,6 +3,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 import type { PhotoAlbum } from '../stores/communityStore';
 import { DRIVE_FOLDER_URL, DRIVE_EMBED_URL } from '../services/googlePhotos';
+import { supabase } from '../services/supabase';
 
 const CSS = `
   .photos-page { padding: 24px; max-width: 960px; }
@@ -18,36 +19,50 @@ const CSS = `
   }
 `;
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+/** Upload a file to Supabase Storage bucket 'camp-images' and return the public URL */
+async function uploadToSupabase(file: File, key: string): Promise<string> {
+  const ext  = file.name.split('.').pop() ?? 'jpg';
+  const path = `covers/${key}_${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('camp-images')
+    .upload(path, file, { upsert: true, cacheControl: '3600' });
+
+  if (uploadError) throw new Error(uploadError.message);
+
+  const { data } = supabase.storage.from('camp-images').getPublicUrl(path);
+  return data.publicUrl;
 }
 
 export const PhotosPage: React.FC = () => {
-  const { hasRole }                                                                              = useAuthStore();
+  const { hasRole }                                                           = useAuthStore();
   const { photoAlbums, photosPublic, setPhotosPublic, addPhotoAlbum,
-          removePhotoAlbum, updatePhotoAlbumCover }                                             = useCommunityStore();
+          removePhotoAlbum, updatePhotoAlbumCover }                           = useCommunityStore();
 
   const canManage = hasRole(['administrator', 'comms']);
   const canView   = canManage || photosPublic;
 
-  const [showAdd,  setShowAdd]  = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newUrl,   setNewUrl]   = useState('');
+  const [showAdd,    setShowAdd]    = useState(false);
+  const [newTitle,   setNewTitle]   = useState('');
+  const [newUrl,     setNewUrl]     = useState('');
+  const [uploading,  setUploading]  = useState<string | null>(null); // albumId being uploaded
 
-  // Per-album cover file refs
   const coverRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const handleCoverFile = async (albumId: string, e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const dataUrl = await fileToDataUrl(file);
-    updatePhotoAlbumCover(albumId, dataUrl);
-    e.target.value = '';
+    setUploading(albumId);
+    try {
+      const url = await uploadToSupabase(file, `album-${albumId}`);
+      updatePhotoAlbumCover(albumId, url);   // saves public URL to Zustand (& localStorage)
+    } catch (err) {
+      console.error('Cover upload failed:', err);
+      alert('Upload failed. Check your Supabase bucket permissions.');
+    } finally {
+      setUploading(null);
+      e.target.value = '';
+    }
   };
 
   const handleAdd = (): void => {
@@ -66,7 +81,7 @@ export const PhotosPage: React.FC = () => {
           <div>
             <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:800, fontSize:'11px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'4px' }}>Camp</div>
             <h1 style={{ fontFamily:"'Alex Brush',cursive", fontStyle:'italic', fontWeight:700, fontSize:'clamp(28px,6vw,40px)', color:'#f7f6dd', margin:'0 0 6px', lineHeight:1 }}>Photos</h1>
-            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:"Arial,Helvetica,sans-serif" }}>Camp memories — auto-updated via Google Drive</p>
+            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'13px', margin:0, fontFamily:'Arial,Helvetica,sans-serif' }}>Camp memories — auto-updated via Google Drive</p>
           </div>
           {canManage && (
             <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', flexShrink:0 }}>
@@ -94,8 +109,8 @@ export const PhotosPage: React.FC = () => {
             <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'12px' }}>
               <input placeholder="Album title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} style={inp}/>
               <input placeholder="Google Drive / Photos URL" value={newUrl} onChange={(e) => setNewUrl(e.target.value)} style={inp}/>
-              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:"Arial,Helvetica,sans-serif" }}>
-                Cover photo: upload after adding the album using the 🖼 button on the card.
+              <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.3)', fontFamily:'Arial,Helvetica,sans-serif' }}>
+                Cover photo: upload after adding using the 🖼 button on the card.
               </div>
             </div>
             <div style={{ display:'flex', gap:'8px' }}>
@@ -110,7 +125,7 @@ export const PhotosPage: React.FC = () => {
           <div style={{ textAlign:'center', padding:'64px 24px', background:'#111D3E', borderRadius:'8px', border:'1px solid rgba(255,255,255,0.06)' }}>
             <div style={{ fontSize:'48px', marginBottom:'16px' }}>📸</div>
             <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:900, fontSize:'22px', textTransform:'uppercase', color:'#f7f6dd', marginBottom:'8px' }}>Photos Coming Soon</div>
-            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'14px', fontFamily:"Arial,Helvetica,sans-serif", maxWidth:'320px', margin:'0 auto', lineHeight:1.7 }}>
+            <p style={{ color:'rgba(247,246,221,0.4)', fontSize:'14px', fontFamily:'Arial,Helvetica,sans-serif', maxWidth:'320px', margin:'0 auto', lineHeight:1.7 }}>
               Camp photos will be shared here after camp. Check back soon!
             </p>
           </div>
@@ -120,7 +135,7 @@ export const PhotosPage: React.FC = () => {
         {canView && (
           <>
             {canManage && (
-              <div style={{ padding:'12px 16px', borderRadius:'6px', marginBottom:'20px', background: photosPublic ? 'rgba(90,138,60,0.08)' : 'rgba(247,246,221,0.06)', border: `1px solid ${photosPublic ? 'rgba(90,138,60,0.2)' : 'rgba(247,246,221,0.15)'}`, fontSize:'12px', fontFamily:"Arial,Helvetica,sans-serif", color: photosPublic ? '#8BC34A' : 'rgba(247,246,221,0.6)' }}>
+              <div style={{ padding:'12px 16px', borderRadius:'6px', marginBottom:'20px', background: photosPublic ? 'rgba(90,138,60,0.08)' : 'rgba(247,246,221,0.06)', border: `1px solid ${photosPublic ? 'rgba(90,138,60,0.2)' : 'rgba(247,246,221,0.15)'}`, fontSize:'12px', fontFamily:'Arial,Helvetica,sans-serif', color: photosPublic ? '#8BC34A' : 'rgba(247,246,221,0.6)' }}>
                 {photosPublic ? '✓ Photos are visible to all members.' : '⚠ Photos are hidden from members. Toggle above to reveal them.'}
               </div>
             )}
@@ -129,7 +144,7 @@ export const PhotosPage: React.FC = () => {
               {photoAlbums.map((album: PhotoAlbum) => (
                 <div key={album.id} className="album-card">
 
-                  {/* Hidden file input per album */}
+                  {/* Hidden file input per album — Supabase upload */}
                   {canManage && (
                     <input
                       ref={(el) => { coverRefs.current[album.id] = el; }}
@@ -150,31 +165,32 @@ export const PhotosPage: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Upload cover button — visible on hover */}
+                    {/* Upload cover button */}
                     {canManage && (
                       <button
                         className="album-cover-btn"
                         onClick={() => coverRefs.current[album.id]?.click()}
+                        disabled={uploading === album.id}
                         style={{
                           position:'absolute', bottom:'8px', right:'8px',
                           padding:'5px 12px', borderRadius:'4px',
                           border:'1px solid rgba(247,246,221,0.35)',
                           background:'rgba(10,17,40,0.85)',
                           color:'rgba(247,246,221,0.8)',
-                          fontSize:'10px', fontWeight:700, cursor:'pointer',
+                          fontSize:'10px', fontWeight:700, cursor: uploading === album.id ? 'not-allowed' : 'pointer',
                           fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif",
                           letterSpacing:'0.08em', textTransform:'uppercase',
                           backdropFilter:'blur(4px)',
                         }}
                       >
-                        🖼 {album.coverPhotoUrl ? 'Change Cover' : 'Upload Cover'}
+                        {uploading === album.id ? 'Uploading…' : `🖼 ${album.coverPhotoUrl ? 'Change Cover' : 'Upload Cover'}`}
                       </button>
                     )}
                   </div>
 
                   <div style={{ padding:'16px' }}>
                     <div style={{ fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", fontWeight:700, fontSize:'16px', color:'#f7f6dd', marginBottom:'4px' }}>{album.title}</div>
-                    <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:"Arial,Helvetica,sans-serif", marginBottom:'14px' }}>
+                    <div style={{ fontSize:'11px', color:'rgba(247,246,221,0.25)', fontFamily:'Arial,Helvetica,sans-serif', marginBottom:'14px' }}>
                       Updated {new Date(album.updatedAt).toLocaleDateString()}
                     </div>
                     <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
@@ -196,7 +212,7 @@ export const PhotosPage: React.FC = () => {
               <div style={{ borderRadius:'8px', overflow:'hidden', border:'1px solid rgba(255,255,255,0.07)' }}>
                 <iframe src={DRIVE_EMBED_URL} title="Camp Photos" style={{ width:'100%', height:'480px', border:'none' }} allow="autoplay"/>
               </div>
-              <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', marginTop:'12px', color:'rgba(247,246,221,0.5)', fontSize:'12px', fontFamily:"Arial,Helvetica,sans-serif", textDecoration:'none' }}>
+              <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', marginTop:'12px', color:'rgba(247,246,221,0.5)', fontSize:'12px', fontFamily:'Arial,Helvetica,sans-serif', textDecoration:'none' }}>
                 Open in Google Drive ↗
               </a>
             </div>
