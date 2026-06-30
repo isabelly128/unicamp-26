@@ -40,3 +40,22 @@ create policy "camp_content_staff_update"
   with check (
     auth.jwt() ->> 'email' in ('admin@camp.sg', 'comms@camp.sg')
   );
+
+-- Keep the shared camp content row compatible with the latest booklet JSON shape.
+-- Existing values are preserved; missing keys are initialized for persistent storage.
+insert into public.camp_content (id, content, updated_by)
+values (
+  'unicamp-2026',
+  jsonb_build_object(
+    'busRows', '[]'::jsonb,
+    'prayerRooms', '[]'::jsonb,
+    'medicText', ''
+  ),
+  'setup'
+)
+on conflict (id) do update
+set content = camp_content.content || jsonb_build_object(
+  'busRows', coalesce(camp_content.content -> 'busRows', '[]'::jsonb),
+  'prayerRooms', coalesce(camp_content.content -> 'prayerRooms', '[]'::jsonb),
+  'medicText', coalesce(camp_content.content -> 'medicText', to_jsonb(''::text))
+);

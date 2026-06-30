@@ -41,6 +41,21 @@ export interface FoodSpot {
   openHours: string;
 }
 
+export interface BusRow {
+  dateDay: string;
+  timing: string;
+  pax: string;
+  pickUp: string;
+  dropOff: string;
+}
+
+export interface PrayerRoom {
+  day: string;
+  timing: string;
+  location: string;
+  mapsUrl: string;
+}
+
 export interface Devotion {
   id: string;
   title: string;
@@ -155,6 +170,9 @@ interface DevotionState {
   schedule:         CampDay[];
   lodging:          LodgingInfo;
   foodSpots:        FoodSpot[];
+  busRows:          BusRow[];
+  prayerRooms:      PrayerRoom[];
+  medicText:        string;
   remoteStatus:     'idle' | 'loading' | 'synced' | 'error';
   remoteError:      string | null;
   lastSyncedAt:     string | null;
@@ -176,6 +194,9 @@ interface DevotionState {
   setLodging:          (info: LodgingInfo) => void;
   setFoodSpots:        (spots: FoodSpot[]) => void;
   updateFoodSpot:      (index: number, spot: FoodSpot) => void;
+  setBusRows:          (rows: BusRow[]) => void;
+  setPrayerRooms:      (rooms: PrayerRoom[]) => void;
+  setMedicText:        (text: string) => void;
 }
 
 const INITIAL_DEVOTIONS: Devotion[] = [
@@ -214,6 +235,9 @@ const contentFromState = (state: DevotionState): CampContentUpdate => ({
   schedule: state.schedule,
   lodging: state.lodging,
   foodSpots: state.foodSpots,
+  busRows: state.busRows,
+  prayerRooms: state.prayerRooms,
+  medicText: state.medicText,
 });
 
 const withDefaults = (content: CampContentUpdate) => ({
@@ -224,6 +248,9 @@ const withDefaults = (content: CampContentUpdate) => ({
   schedule: content.schedule ?? DEFAULT_SCHEDULE,
   lodging: content.lodging ?? DEFAULT_LODGING,
   foodSpots: content.foodSpots ?? DEFAULT_FOOD,
+  busRows: content.busRows ?? [],
+  prayerRooms: content.prayerRooms ?? [],
+  medicText: content.medicText ?? '',
 });
 
 const errorMessage = (error: unknown): string =>
@@ -244,6 +271,9 @@ export const useDevotionStore = create<DevotionState>()(
       schedule:         DEFAULT_SCHEDULE,
       lodging:          DEFAULT_LODGING,
       foodSpots:        DEFAULT_FOOD,
+      busRows:          [],
+      prayerRooms:      [],
+      medicText:        '',
       remoteStatus:     'idle',
       remoteError:      null,
       lastSyncedAt:     null,
@@ -372,6 +402,21 @@ export const useDevotionStore = create<DevotionState>()(
         { set((s: DevotionState) => ({
           foodSpots: s.foodSpots.map((f: FoodSpot, i: number) => i === index ? spot : f),
         })); syncAfterSet(); },
+
+      setBusRows: (rows: BusRow[]) => {
+        set({ busRows: rows });
+        syncAfterSet();
+      },
+
+      setPrayerRooms: (rooms: PrayerRoom[]) => {
+        set({ prayerRooms: rooms });
+        syncAfterSet();
+      },
+
+      setMedicText: (text: string) => {
+        set({ medicText: text });
+        syncAfterSet();
+      },
     });
     },
     {
@@ -385,6 +430,9 @@ export const useDevotionStore = create<DevotionState>()(
         schedule: state.schedule,
         lodging: state.lodging,
         foodSpots: state.foodSpots,
+        busRows: state.busRows,
+        prayerRooms: state.prayerRooms,
+        medicText: state.medicText,
       }),
     }
   )

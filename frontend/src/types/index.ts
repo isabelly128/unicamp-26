@@ -113,3 +113,18 @@ export interface FoodSpot {
   address: string;
   openHours: string;
 }
+
+export interface BusRow {
+  dateDay: string;
+  timing: string;
+  pax: string;
+  pickUp: string;
+  dropOff: string;
+}
+
+export interface PrayerRoom {
+  day: string;
+  timing: string;
+  location: string;
+  mapsUrl: string;
+}

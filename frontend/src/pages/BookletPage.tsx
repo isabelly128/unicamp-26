@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useDevotionStore } from '../stores/devotionStore';
-import type { CampDay, DaySession, LodgingInfo, FoodSpot } from '../stores/devotionStore';
+import type { BusRow, CampDay, DaySession, LodgingInfo, FoodSpot, PrayerRoom } from '../stores/devotionStore';
 import { SyncStatus } from '../components/SyncStatus';
 
 type Section = 'packing' | 'day1' | 'day2' | 'day3' | 'day4' | 'bus' | 'prayer-room' | 'vol' | 'medic' | 'lodging' | 'food';
@@ -110,21 +110,6 @@ We honour your dedication and cover you in prayer.
 
 
 // ── New section types ─────────────────────────────────────────────────────────
-interface BusRow {
-  dateDay: string;
-  timing:  string;
-  pax:     string;
-  pickUp:  string;
-  dropOff: string;
-}
-
-interface PrayerRoom {
-  day:      string;
-  timing:   string;
-  location: string;
-  mapsUrl:  string;
-}
-
 const emptyBusRow    = (): BusRow     => ({ dateDay:'', timing:'', pax:'', pickUp:'', dropOff:'' });
 const emptyPrayerRoom = (): PrayerRoom => ({ day:'', timing:'', location:'', mapsUrl:'' });
 
@@ -138,9 +123,11 @@ export const BookletPage: React.FC = () => {
   const { hasRole } = useAuthStore();
   const {
     packingListText, volDedicationText, schedule, lodging, foodSpots,
+    busRows, prayerRooms, medicText,
     setPackingListText, setVolDedicationText,
     updateSession, addSession, removeSession,
     setLodging, updateFoodSpot, setFoodSpots,
+    setBusRows, setPrayerRooms, setMedicText,
   } = useDevotionStore();
 
   const canEdit = hasRole(['administrator', 'comms']);
@@ -165,17 +152,14 @@ export const BookletPage: React.FC = () => {
 
 
   // ── Bus timings state ────────────────────────────────────────────────────────
-  const [busRows, setBusRows]         = useState<BusRow[]>([]);
   const [editingBus, setEditingBus]   = useState(false);
   const [busDraft, setBusDraft]       = useState<BusRow[]>([]);
 
   // ── Prayer room state ─────────────────────────────────────────────────────────
-  const [prayerRooms, setPrayerRooms]         = useState<PrayerRoom[]>([]);
   const [editingPrayer, setEditingPrayer]     = useState(false);
   const [prayerDraft, setPrayerDraft]         = useState<PrayerRoom[]>([]);
 
   // ── Medic info state ──────────────────────────────────────────────────────────
-  const [medicText, setMedicText]       = useState('');
   const [editingMedic, setEditingMedic] = useState(false);
   const [medicDraft, setMedicDraft]     = useState('');
 

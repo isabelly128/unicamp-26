@@ -3,7 +3,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCommunityStore } from '../stores/communityStore';
 import type { PhotoAlbum } from '../stores/communityStore';
 import { DRIVE_FOLDER_URL, DRIVE_EMBED_URL } from '../services/googlePhotos';
-import { supabase } from '../services/supabase';
+import { uploadCampPhoto } from '../services/campPhotoStorageApi';
 
 const CSS = `
   .photos-page { padding: 24px; max-width: 960px; }
@@ -18,21 +18,6 @@ const CSS = `
     .album-cover-btn { opacity: 1 !important; }
   }
 `;
-
-/** Upload a file to Supabase Storage bucket 'camp-images' and return the public URL */
-async function uploadToSupabase(file: File, key: string): Promise<string> {
-  const ext  = file.name.split('.').pop() ?? 'jpg';
-  const path = `covers/${key}_${Date.now()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from('camp-images')
-    .upload(path, file, { upsert: true, cacheControl: '3600' });
-
-  if (uploadError) throw new Error(uploadError.message);
-
-  const { data } = supabase.storage.from('camp-images').getPublicUrl(path);
-  return data.publicUrl;
-}
 
 export const PhotosPage: React.FC = () => {
   const { hasRole }                                                           = useAuthStore();
@@ -54,11 +39,13 @@ export const PhotosPage: React.FC = () => {
     if (!file) return;
     setUploading(albumId);
     try {
-      const url = await uploadToSupabase(file, `album-${albumId}`);
-      updatePhotoAlbumCover(albumId, url);   // saves public URL to Zustand (& localStorage)
+      const album = photoAlbums.find((item) => item.id === albumId);
+      const { url } = await uploadCampPhoto(file, 'album-cover', album?.title || `album-${albumId}`);
+      updatePhotoAlbumCover(albumId, url);
     } catch (err) {
       console.error('Cover upload failed:', err);
-      alert('Upload failed. Check your Supabase bucket permissions.');
+      const message = err instanceof Error ? err.message : 'Upload failed. Check your Supabase bucket permissions.';
+      alert(message);
     } finally {
       setUploading(null);
       e.target.value = '';

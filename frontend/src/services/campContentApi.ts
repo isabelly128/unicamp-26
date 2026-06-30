@@ -1,4 +1,4 @@
-import type { CampDay, Devotion, FoodSpot, LodgingInfo, SermonNote } from '../stores/devotionStore';
+import type { BusRow, CampDay, Devotion, FoodSpot, LodgingInfo, PrayerRoom, SermonNote } from '../stores/devotionStore';
 import type { CardImageMap, PhotoAlbum, SectionPhotoMap } from '../stores/communityStore';
 import { getSupabaseAccessToken, getSupabaseAnonKey, getSupabaseUrl } from './staffAuthApi';
 
@@ -10,6 +10,9 @@ export interface CampContentPayload {
   schedule: CampDay[];
   lodging: LodgingInfo;
   foodSpots: FoodSpot[];
+  busRows: BusRow[];
+  prayerRooms: PrayerRoom[];
+  medicText: string;
   photoAlbums: PhotoAlbum[];
   photosPublic: boolean;
   heroBgUrl: string;

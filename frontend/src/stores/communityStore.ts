@@ -152,15 +152,21 @@ export const useCommunityStore = create<CommunityState>()(
         set({ remoteStatus: 'loading', remoteError: null });
 
         try {
-          const [content, wallContent] = await Promise.all([
-            fetchCampContent(),
-            fetchCommunityWall(),
-          ]);
+          const content = await fetchCampContent();
+          let wallContent: Pick<CommunityState, 'prayerRequests' | 'convictions' | 'thanksgivings'> | null = null;
+          let wallError: string | null = null;
+
+          try {
+            wallContent = await fetchCommunityWall();
+          } catch (error) {
+            wallError = errorMessage(error);
+          }
+
           set({
             ...(content ? withDefaults(content) : {}),
-            ...wallContent,
-            remoteStatus: 'synced',
-            remoteError: null,
+            ...(wallContent ?? {}),
+            remoteStatus: wallError ? 'error' : 'synced',
+            remoteError: wallError,
             lastSyncedAt: new Date().toISOString(),
           });
         } catch (error) {
@@ -263,7 +269,9 @@ export const useCommunityStore = create<CommunityState>()(
 
       updatePhotoAlbumCover: (id: string, coverUrl: string) =>
         { set((s: CommunityState) => ({
-          photoAlbums: s.photoAlbums.map((a: PhotoAlbum) => a.id === id ? { ...a, coverPhotoUrl: coverUrl } : a),
+          photoAlbums: s.photoAlbums.map((a: PhotoAlbum) =>
+            a.id === id ? { ...a, coverPhotoUrl: coverUrl, updatedAt: new Date().toISOString() } : a
+          ),
         })); syncAfterSet(); },
       removePhotoAlbum: (id: string) =>
         { set((s: CommunityState) => ({
