@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useDevotionStore } from '../stores/devotionStore';
 import type { BusRow, CampDay, DaySession, LodgingInfo, FoodSpot, PrayerRoom } from '../stores/devotionStore';
@@ -20,9 +20,27 @@ const CSS = `
   .bk-session-card { flex: 1; background: #111D3E; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 13px 15px; }
   .bk-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .bk-food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
+  .bk-next-animated {
+    background-size: 220% 220%;
+    background-repeat: no-repeat;
+    animation: bk-next-gradient-glow 1s ease-in-out infinite;
+  }
   /* Rich text display */
   .bk-richtext { font-family: 'Barlow',sans-serif; font-size: 14px; color: rgba(247,246,221,0.7); line-height: 1.8; white-space: pre-wrap; }
   .bk-richtext strong { color: #f7f6dd; font-weight: 600; }
+  @keyframes bk-next-gradient-glow {
+    0%, 100% {
+      background-position: 0% 50%;
+      filter: brightness(1);
+    }
+    50% {
+      background-position: 100% 50%;
+      filter: brightness(1.14);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bk-next-animated { animation: none !important; }
+  }
   @media (max-width: 640px) {
     .bk-page { padding: 16px 14px; }
     .bk-edit-grid { grid-template-columns: 1fr; }
@@ -55,6 +73,169 @@ const TAB_ROWS: Section[][] = [
 const DAY_INDEX: Record<string, number> = { day1: 0, day2: 1, day3: 2, day4: 3 };
 const isDay = (s: Section): s is 'day1' | 'day2' | 'day3' | 'day4' =>
   ['day1', 'day2', 'day3', 'day4'].includes(s);
+
+const CAMP_YEAR = 2026;
+
+type DateParts = { month: number; day: number };
+type TimeParts = { hour: number; minute: number };
+type EventRange = { startsAt: Date; endsAt?: Date };
+type NextScheduleEvent = { dayIndex: number; sessionIndex: number };
+
+const MONTH_PATTERN = 'jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?';
+const MONTH_INDEX: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+};
+const WEEKDAY_ALIASES: Record<string, string[]> = {
+  sunday: ['sunday', 'sun'],
+  monday: ['monday', 'mon'],
+  tuesday: ['tuesday', 'tue', 'tues'],
+  wednesday: ['wednesday', 'wed'],
+  thursday: ['thursday', 'thu', 'thur', 'thurs'],
+  friday: ['friday', 'fri'],
+  saturday: ['saturday', 'sat'],
+};
+
+const parseMonthDay = (value: string): DateParts | null => {
+  const monthFirst = value.match(new RegExp(`\\b(${MONTH_PATTERN})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?\\b`, 'i'));
+  const dayFirst = value.match(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(${MONTH_PATTERN})\\.?\\b`, 'i'));
+  const match = monthFirst ?? dayFirst;
+  if (!match) return null;
+
+  const monthText = monthFirst ? match[1] : match[2];
+  const dayText = monthFirst ? match[2] : match[1];
+  const month = MONTH_INDEX[monthText.toLowerCase().slice(0, 3)];
+  const day = Number(dayText);
+
+  return month === undefined || Number.isNaN(day) ? null : { month, day };
+};
+
+const resolveCampDay = (value: string, schedule: CampDay[]): CampDay | null => {
+  const lower = value.toLowerCase();
+  const dayMatch = lower.match(/\bday\s*([1-9]\d*)\b/);
+  if (dayMatch) {
+    const dayNo = Number(dayMatch[1]);
+    const byNumber = schedule.find((day) => day.day === dayNo);
+    if (byNumber) return byNumber;
+  }
+
+  return schedule.find((day) => {
+    const weekday = day.date.split(',')[0]?.trim().toLowerCase();
+    const aliases = weekday ? WEEKDAY_ALIASES[weekday] : undefined;
+    return aliases?.some((alias) => lower.includes(alias));
+  }) ?? null;
+};
+
+const getDateParts = (value: string, schedule: CampDay[]): DateParts | null => {
+  const explicitDate = parseMonthDay(value);
+  if (explicitDate) return explicitDate;
+
+  const referencedDay = resolveCampDay(value, schedule);
+  return referencedDay ? parseMonthDay(referencedDay.date) : null;
+};
+
+const toTimeParts = (hourValue: number, minute: number, period?: string): TimeParts | null => {
+  if (period) {
+    const normalizedHour = hourValue % 12;
+    return {
+      hour: period.toUpperCase() === 'PM' ? normalizedHour + 12 : normalizedHour,
+      minute,
+    };
+  }
+
+  return hourValue <= 23 ? { hour: hourValue, minute } : null;
+};
+
+const parseTimeParts = (value: string): TimeParts[] => {
+  const rawTokens = Array.from(value.matchAll(/\b(\d{1,2})(?::([0-5]\d))?\s*(AM|PM)?\b/gi))
+    .filter((match) => Boolean(match[3]) || match[0].includes(':'))
+    .map((match) => ({
+      hour: Number(match[1]),
+      minute: match[2] ? Number(match[2]) : 0,
+      period: match[3]?.toUpperCase(),
+    }));
+
+  return rawTokens
+    .map((token, index) => toTimeParts(
+      token.hour,
+      token.minute,
+      token.period ?? rawTokens[index + 1]?.period ?? rawTokens[index - 1]?.period,
+    ))
+    .filter((time): time is TimeParts => time !== null);
+};
+
+const buildCampDate = ({ month, day }: DateParts, { hour, minute }: TimeParts): Date =>
+  new Date(CAMP_YEAR, month, day, hour, minute, 0, 0);
+
+const getEventRange = (dateText: string, timeText: string, schedule: CampDay[]): EventRange | null => {
+  const dateParts = getDateParts(dateText, schedule);
+  const [startTime, endTime] = parseTimeParts(timeText);
+  if (!dateParts || !startTime) return null;
+
+  const startsAt = buildCampDate(dateParts, startTime);
+  const endsAt = endTime ? buildCampDate(dateParts, endTime) : undefined;
+  if (endsAt && endsAt.getTime() <= startsAt.getTime()) {
+    endsAt.setDate(endsAt.getDate() + 1);
+  }
+
+  return { startsAt, endsAt };
+};
+
+const isUpcomingOrOngoing = (range: EventRange, now: Date): boolean =>
+  (range.endsAt ?? range.startsAt).getTime() >= now.getTime();
+
+const getNextUpcomingIndex = <T,>(
+  items: T[],
+  getRange: (item: T) => EventRange | null,
+  now: Date,
+): number | null => {
+  const candidates = items
+    .map((item, index) => ({ index, range: getRange(item) }))
+    .filter((item): item is { index: number; range: EventRange } =>
+      item.range !== null && isUpcomingOrOngoing(item.range, now),
+    )
+    .sort((a, b) => a.range.startsAt.getTime() - b.range.startsAt.getTime());
+
+  return candidates[0]?.index ?? null;
+};
+
+const getNextScheduleEvent = (schedule: CampDay[], now: Date): NextScheduleEvent | null => {
+  const candidates: Array<{ dayIndex: number; sessionIndex: number; range: EventRange }> = [];
+
+  schedule.forEach((day, dayIndex) => {
+    day.sessions.forEach((session, sessionIndex) => {
+      const range = getEventRange(day.date, session.time, schedule);
+      if (!range || !isUpcomingOrOngoing(range, now)) return;
+      candidates.push({ dayIndex, sessionIndex, range });
+    });
+  });
+
+  const [next] = candidates.sort((a, b) => a.range.startsAt.getTime() - b.range.startsAt.getTime());
+  return next ? { dayIndex: next.dayIndex, sessionIndex: next.sessionIndex } : null;
+};
+
+const getLastBusIndexesByDay = (rows: BusRow[], schedule: CampDay[]): Set<number> => {
+  const latestByDay = new Map<string, { index: number; startsAt: number }>();
+
+  rows.forEach((row, index) => {
+    const range = getEventRange(`${row.dateDay} ${row.timing}`, row.timing, schedule);
+    if (!range) return;
+
+    const key = [
+      range.startsAt.getFullYear(),
+      range.startsAt.getMonth(),
+      range.startsAt.getDate(),
+    ].join('-');
+    const existing = latestByDay.get(key);
+    const startsAt = range.startsAt.getTime();
+
+    if (!existing || startsAt >= existing.startsAt) {
+      latestByDay.set(key, { index, startsAt });
+    }
+  });
+
+  return new Set(Array.from(latestByDay.values(), ({ index }) => index));
+};
 
 // Default packing list text
 const DEFAULT_PACKING = `CLOTHING & ESSENTIALS
@@ -138,6 +319,7 @@ export const BookletPage: React.FC = () => {
   } = useDevotionStore();
 
   const canEdit = hasRole(['administrator', 'comms']);
+  const [now, setNow] = useState(() => new Date());
 
   const [section, setSection]           = useState<Section>('day1');
   const [editingSession, setEditing]    = useState<{ di: number; si: number } | null>(null);
@@ -172,6 +354,29 @@ export const BookletPage: React.FC = () => {
 
   const currentDay: CampDay | null = isDay(section) ? schedule[DAY_INDEX[section]] : null;
   const currentDi: number          = isDay(section) ? DAY_INDEX[section] : 0;
+  const nextScheduleEvent = useMemo(() => getNextScheduleEvent(schedule, now), [schedule, now]);
+  const nextBusIndex = useMemo(
+    () => getNextUpcomingIndex(
+      busRows,
+      (row) => getEventRange(`${row.dateDay} ${row.timing}`, row.timing, schedule),
+      now,
+    ),
+    [busRows, schedule, now],
+  );
+  const lastBusIndexes = useMemo(() => getLastBusIndexesByDay(busRows, schedule), [busRows, schedule]);
+  const nextPrayerIndex = useMemo(
+    () => getNextUpcomingIndex(
+      prayerRooms,
+      (room) => getEventRange(`${room.day} ${room.timing}`, room.timing, schedule),
+      now,
+    ),
+    [prayerRooms, schedule, now],
+  );
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const saveSession = (di: number, si: number): void => {
     updateSession(di, si, sessionDraft);
@@ -285,11 +490,12 @@ export const BookletPage: React.FC = () => {
             {currentDay.sessions.map((sess: DaySession, si: number) => {
               const di = currentDi;
               const isEditingThis = editingSession?.di === di && editingSession?.si === si;
+              const isNextSession = nextScheduleEvent?.dayIndex === di && nextScheduleEvent?.sessionIndex === si;
               return (
                 <div key={si} className="bk-session">
-                  <div style={{ width:'8px', height:'8px', borderRadius:'50%', background: TYPE_COLORS[sess.type] || '#f7f6dd', marginTop:'18px', flexShrink:0, border:'2px solid #0A1128' }}/>
-                  <div style={{ minWidth:'60px', fontSize:'11px', color:'rgba(247,246,221,0.3)', paddingTop:'14px', fontFamily:"'Barlow',sans-serif" }}>{sess.time}</div>
-                  <div className="bk-session-card" style={{ borderLeft:`3px solid ${TYPE_COLORS[sess.type] || 'transparent'}` }}>
+                  <div style={{ width:'8px', height:'8px', borderRadius:'50%', background: isNextSession ? '#f7f6dd' : TYPE_COLORS[sess.type] || '#f7f6dd', marginTop:'18px', flexShrink:0, border:'2px solid #0A1128', boxShadow: isNextSession ? '0 0 0 5px rgba(247,246,221,0.12)' : undefined }}/>
+                  <div style={{ minWidth:'60px', fontSize:'11px', color: isNextSession ? '#f7f6dd' : 'rgba(247,246,221,0.3)', paddingTop:'14px', fontFamily:"'Barlow',sans-serif", fontWeight: isNextSession ? 700 : 400 }}>{sess.time}</div>
+                  <div className={`bk-session-card${isNextSession ? ' bk-next-animated' : ''}`} style={{ borderLeft:`3px solid ${isNextSession ? '#f7f6dd' : TYPE_COLORS[sess.type] || 'transparent'}`, ...(isNextSession ? nextEventCardStyle : {}) }}>
                     {isEditingThis && canEdit ? (
                       <div>
                         <div className="bk-edit-grid">
@@ -313,6 +519,7 @@ export const BookletPage: React.FC = () => {
                           <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom: sess.description ? '4px' : 0 }}>
                             <span style={{ fontSize:'16px' }}>{sess.icon}</span>
                             <span style={{ fontSize:'14px', fontWeight:600, color:'#f7f6dd', fontFamily:"'Barlow Condensed',sans-serif" }}>{sess.title}</span>
+                            {isNextSession && <span style={nextEventBadgeStyle}>Next Up</span>}
                           </div>
                           {sess.description && <p style={{ fontSize:'12px', color:'rgba(247,246,221,0.35)', margin:'0 0 0 24px', fontFamily:"'Barlow',sans-serif" }}>{sess.description}</p>}
                         </div>
@@ -452,15 +659,29 @@ export const BookletPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {busRows.map((row, i) => (
-                      <tr key={i} style={{ borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-                        <td style={{ padding:'12px 14px', fontSize:'13px', color:'#f7f6dd', fontFamily:'Arial,Helvetica,sans-serif', whiteSpace:'nowrap' }}>{row.dateDay}</td>
-                        <td style={{ padding:'12px 14px', fontSize:'13px', color:'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif', whiteSpace:'nowrap' }}>{row.timing}</td>
-                        <td style={{ padding:'12px 14px', fontSize:'13px', color:'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif', textAlign:'center' }}>{row.pax}</td>
-                        <td style={{ padding:'12px 14px', fontSize:'13px', color:'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif' }}>{row.pickUp}</td>
-                        <td style={{ padding:'12px 14px', fontSize:'13px', color:'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif' }}>{row.dropOff}</td>
-                      </tr>
-                    ))}
+                    {busRows.map((row, i) => {
+                      const isNextBus = i === nextBusIndex;
+                      const isNextLastBus = isNextBus && lastBusIndexes.has(i);
+                      return (
+                        <tr key={i} className={isNextBus ? 'bk-next-animated' : undefined} style={{ borderBottom:'1px solid rgba(255,255,255,0.04)', ...(isNextBus ? nextTableRowStyle : {}), ...(isNextLastBus ? lastBusRowStyle : {}) }}>
+                          <td style={{ padding:'12px 14px', fontSize:'13px', color: isNextLastBus ? '#ff9a62' : '#f7f6dd', fontFamily:'Arial,Helvetica,sans-serif', whiteSpace:'nowrap', fontWeight: isNextLastBus ? 800 : 400 }}>
+                            <span style={{ display:'inline-flex', alignItems:'center', gap:'8px' }}>
+                              {row.dateDay}
+                              {isNextBus && <span style={nextEventBadgeStyle}>Next Up</span>}
+                            </span>
+                          </td>
+                          <td style={{ padding:'12px 14px', fontSize:'13px', color: isNextLastBus ? '#ff9a62' : isNextBus ? '#f7f6dd' : 'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif', whiteSpace:'nowrap', fontWeight: isNextLastBus || isNextBus ? 700 : 400 }}>
+                            <span style={{ display:'inline-flex', alignItems:'center', gap:'8px' }}>
+                              {row.timing}
+                              {isNextLastBus && <span style={lastBusBadgeStyle}>Last Bus</span>}
+                            </span>
+                          </td>
+                          <td style={{ padding:'12px 14px', fontSize:'13px', color: isNextLastBus ? 'rgba(255,154,98,0.82)' : 'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif', textAlign:'center' }}>{row.pax}</td>
+                          <td style={{ padding:'12px 14px', fontSize:'13px', color: isNextLastBus ? 'rgba(255,154,98,0.82)' : 'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif' }}>{row.pickUp}</td>
+                          <td style={{ padding:'12px 14px', fontSize:'13px', color: isNextLastBus ? 'rgba(255,154,98,0.82)' : 'rgba(247,246,221,0.7)', fontFamily:'Arial,Helvetica,sans-serif' }}>{row.dropOff}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -513,25 +734,31 @@ export const BookletPage: React.FC = () => {
               <EmptyState icon="🙏" title="No prayer room schedule added" sub={canEdit ? 'Click Edit to add prayer room timings.' : 'Check back soon!'} />
             ) : (
               <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
-                {prayerRooms.map((room, i) => (
-                  <div key={i} style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'18px 20px', display:'flex', flexWrap:'wrap', gap:'20px', alignItems:'center' }}>
-                    <div style={{ minWidth:'80px' }}>
-                      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.4)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'3px' }}>Day</div>
-                      <div style={{ fontSize:'14px', color:'#f7f6dd', fontFamily:'Arial,Helvetica,sans-serif' }}>{room.day}</div>
+                {prayerRooms.map((room, i) => {
+                  const isNextPrayer = i === nextPrayerIndex;
+                  return (
+                    <div key={i} className={isNextPrayer ? 'bk-next-animated' : undefined} style={{ background:'#111D3E', border:'1px solid rgba(255,255,255,0.07)', borderRadius:'8px', padding:'18px 20px', display:'flex', flexWrap:'wrap', gap:'20px', alignItems:'center', ...(isNextPrayer ? nextEventCardStyle : {}) }}>
+                      <div style={{ minWidth:'80px' }}>
+                        <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.4)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'3px' }}>Day</div>
+                        <div style={{ display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap', fontSize:'14px', color:'#f7f6dd', fontFamily:'Arial,Helvetica,sans-serif' }}>
+                          <span>{room.day}</span>
+                          {isNextPrayer && <span style={nextEventBadgeStyle}>Next Up</span>}
+                        </div>
+                      </div>
+                      <div style={{ minWidth:'120px' }}>
+                        <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.4)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'3px' }}>Timing</div>
+                        <div style={{ fontSize:'14px', color: isNextPrayer ? '#f7f6dd' : 'rgba(247,246,221,0.8)', fontFamily:'Arial,Helvetica,sans-serif', fontWeight: isNextPrayer ? 700 : 400 }}>{room.timing}</div>
+                      </div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.4)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'3px' }}>Location</div>
+                        <div style={{ fontSize:'14px', color:'rgba(247,246,221,0.8)', fontFamily:'Arial,Helvetica,sans-serif' }}>{room.location}</div>
+                      </div>
+                      {room.mapsUrl && (
+                        <a href={room.mapsUrl} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', background:'#f7f6dd', color:'#0A1128', textDecoration:'none', fontSize:'11px', fontWeight:800, fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.08em', textTransform:'uppercase', flexShrink:0 }}>📍 Map</a>
+                      )}
                     </div>
-                    <div style={{ minWidth:'120px' }}>
-                      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.4)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'3px' }}>Timing</div>
-                      <div style={{ fontSize:'14px', color:'rgba(247,246,221,0.8)', fontFamily:'Arial,Helvetica,sans-serif' }}>{room.timing}</div>
-                    </div>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:'10px', color:'rgba(247,246,221,0.4)', fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'3px' }}>Location</div>
-                      <div style={{ fontSize:'14px', color:'rgba(247,246,221,0.8)', fontFamily:'Arial,Helvetica,sans-serif' }}>{room.location}</div>
-                    </div>
-                    {room.mapsUrl && (
-                      <a href={room.mapsUrl} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'4px', background:'#f7f6dd', color:'#0A1128', textDecoration:'none', fontSize:'11px', fontWeight:800, fontFamily:"'Arial Black','Arial Bold',Gadget,sans-serif", letterSpacing:'0.08em', textTransform:'uppercase', flexShrink:0 }}>📍 Map</a>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -731,6 +958,55 @@ const InfoRow: React.FC<{ icon: string; label: string; value: string }> = ({ ico
     </div>
   </div>
 );
+
+const nextEventCardStyle: React.CSSProperties = {
+  borderColor:'rgba(247,246,221,0.55)',
+  background:'linear-gradient(135deg,rgba(247,246,221,0.17),rgba(74,144,217,0.12))',
+  boxShadow:'0 0 0 1px rgba(247,246,221,0.12), 0 14px 30px rgba(0,0,0,0.18)',
+};
+
+const nextTableRowStyle: React.CSSProperties = {
+  background:'linear-gradient(135deg,rgba(247,246,221,0.14),rgba(74,144,217,0.1))',
+  boxShadow:'inset 3px 0 0 #f7f6dd',
+};
+
+const lastBusRowStyle: React.CSSProperties = {
+  background:'linear-gradient(135deg,rgba(255,106,61,0.2) 0%,rgba(247,246,221,0.22) 44%,rgba(255,154,98,0.14) 52%,rgba(255,106,61,0.12) 100%)',
+  boxShadow:'inset 3px 0 0 #ff6a3d',
+};
+
+const nextEventBadgeStyle: React.CSSProperties = {
+  display:'inline-flex',
+  alignItems:'center',
+  padding:'3px 7px',
+  borderRadius:'999px',
+  background:'#f7f6dd',
+  color:'#0A1128',
+  fontFamily:"'Barlow Condensed',sans-serif",
+  fontSize:'10px',
+  fontWeight:900,
+  letterSpacing:'0.08em',
+  lineHeight:1,
+  textTransform:'uppercase',
+  whiteSpace:'nowrap',
+};
+
+const lastBusBadgeStyle: React.CSSProperties = {
+  display:'inline-flex',
+  alignItems:'center',
+  padding:'3px 7px',
+  borderRadius:'999px',
+  background:'rgba(255,106,61,0.18)',
+  color:'#ffb28a',
+  border:'1px solid rgba(255,106,61,0.35)',
+  fontFamily:"'Barlow Condensed',sans-serif",
+  fontSize:'10px',
+  fontWeight:900,
+  letterSpacing:'0.08em',
+  lineHeight:1,
+  textTransform:'uppercase',
+  whiteSpace:'nowrap',
+};
 
 const inp: React.CSSProperties = {
   padding:'11px 13px', borderRadius:'4px',
