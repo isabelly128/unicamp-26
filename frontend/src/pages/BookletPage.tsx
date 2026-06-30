@@ -13,8 +13,8 @@ const TYPE_COLORS: Record<string, string> = {
 
 const CSS = `
   .bk-page { padding: 24px; max-width: 860px; }
-  .bk-tabs { display: flex; gap: 6px; margin-bottom: 28px; overflow-x: auto; padding-bottom: 4px; }
-  .bk-tabs::-webkit-scrollbar { display: none; }
+  .bk-tabs { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 28px; overflow: visible; }
+  .bk-tab-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; width: 100%; }
   .bk-tab { flex-shrink: 0; padding: 9px 16px; border-radius: 100px; border: 1px solid; font-family: 'Barlow Condensed',sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
   .bk-session { display: flex; gap: 14px; margin-bottom: 12px; }
   .bk-session-card { flex: 1; background: #111D3E; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 13px 15px; }
@@ -43,6 +43,13 @@ const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: 'medic',        label: 'Medic Info',       icon: '🏥' },
   { key: 'lodging', label: 'Lodging',        icon: '🏕️' },
   { key: 'food',    label: 'Food & HTHT',    icon: '🍜' },
+];
+
+const TAB_ROWS: Section[][] = [
+  ['day1', 'day2', 'day3', 'day4'],
+  ['packing', 'bus', 'prayer-room'],
+  ['vol', 'medic'],
+  ['lodging', 'food'],
 ];
 
 const DAY_INDEX: Record<string, number> = { day1: 0, day2: 1, day3: 2, day4: 3 };
@@ -208,12 +215,22 @@ export const BookletPage: React.FC = () => {
 
         {/* Tabs */}
         <div className="bk-tabs">
-          {SECTIONS.map(({ key, label, icon }) => (
-            <button key={key} onClick={() => setSection(key)} className="bk-tab" style={{
-              borderColor: section === key ? '#f7f6dd' : 'rgba(255,255,255,0.08)',
-              background:  section === key ? 'rgba(247,246,221,0.1)' : 'transparent',
-              color:       section === key ? '#f7f6dd' : 'rgba(247,246,221,0.35)',
-            }}>{icon} {label}</button>
+          {TAB_ROWS.map((row, rowIndex) => (
+            <div className="bk-tab-row" key={rowIndex}>
+              {row.map((tabKey) => {
+                const tab = SECTIONS.find(({ key }) => key === tabKey);
+                if (!tab) return null;
+
+                const { key, label, icon } = tab;
+                return (
+                  <button key={key} onClick={() => setSection(key)} className="bk-tab" style={{
+                    borderColor: section === key ? '#f7f6dd' : 'rgba(255,255,255,0.08)',
+                    background:  section === key ? 'rgba(247,246,221,0.1)' : 'transparent',
+                    color:       section === key ? '#f7f6dd' : 'rgba(247,246,221,0.35)',
+                  }}>{icon} {label}</button>
+                );
+              })}
+            </div>
           ))}
         </div>
 
